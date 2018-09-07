@@ -2,7 +2,7 @@
 #define BOT_H
 
 class bot{
-    int current_move;
-    Board* gameboard;
+    
     
 }
+#endif

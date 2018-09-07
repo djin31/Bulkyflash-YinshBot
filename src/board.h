@@ -16,12 +16,18 @@ class Board{
 		int white_markers;
 		int black_rings_out;
 		int white_rings_out;
+		int turn_id;
+
+		vector<pair<int,int>> white_rings;
+		vector<pair<int,int>> black_rings;
 
 		Board(int board_size, int given_rings, int rings_to_remove, int markers_in_line);
 
-		execute_move();
+		Board* execute_move();
 
-		get_valid_moves(int player_id);
+		int eval_func();
+
+		vector<Board*> get_valid_moves(int player_id);
 }
 
 #endif
