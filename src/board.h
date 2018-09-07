@@ -5,29 +5,33 @@
 #include <cstdlib>
 using namespace std;
 
+int BOARD_SIZE;			// N
+int GIVEN_RINGS;		// M
+int RINGS_TO_REMOVE;	// L
+int MARKERS_IN_LINE;	// K
+
 class Board{
 	public:
 		vector<vector<int>> board;
-		int board_size;			// N
-		int given_rings;		// M
-		int rings_to_remove;	// L
-		int markers_in_line;	// K
+
 		int black_markers;
 		int white_markers;
 		int black_rings_out;
 		int white_rings_out;
-		int turn_id;
+		int turn_id;			
 
 		vector<pair<int,int>> white_rings;
 		vector<pair<int,int>> black_rings;
 
-		Board(int board_size, int given_rings, int rings_to_remove, int markers_in_line);
+		Board();
 
 		Board* execute_move();
 
-		int eval_func();
+		double eval_func();
 
-		vector<Board*> get_valid_moves(int player_id);
-}
+		vector<pair<Board*, string>> get_valid_moves();
+
+		bool check_terminal();
+};
 
 #endif
