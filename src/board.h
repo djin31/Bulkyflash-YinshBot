@@ -5,11 +5,16 @@
 #include <cstdlib>
 using namespace std;
 
-<<<<<<< HEAD
 struct location
 {
 	int hexagon;
 	int position;
+};
+
+struct coordinates
+{
+	int x;	//vertical line
+	int y;	//line 60* to the horizontal (CCW)
 };
 
 class Board{
@@ -19,33 +24,45 @@ class Board{
 		int given_rings;		// M
 		int rings_to_remove;	// L
 		int markers_in_line;	// K
-		int black_markers;
-		int white_markers;
+		
 		int black_rings_in;
 		int white_rings_in;
 		int black_rings_out;
 		int white_rings_out;
-		int turn_id;			
+		
+		int turn_id;	// 0 << white, 1 << black			
 
-		vector<pair<int,int>> white_rings;
-		vector<pair<int,int>> black_rings;
+		vector<coordinates> white_rings;
+		vector<coordinates> black_rings;
+
+		//helper functions
+		void iterate_over_line(int value, int c, int line_no, int start, int end);	// value = -1 for flip, 0 for remove //  c = 0 for iterating over x, 1 for y // iteration only along x or y
+		coordinates location_to_coordinates(location l);
 
 		// ring_no : black ring << 2, white ring << -2
 		// These function do not check the validity of the move, they can only tell if the location is outside the board
-		bool placeRing(int ring_no, location l);
-		bool moveRing(location start, location end);
-		bool removeMarkerSeq(location start, location end);
-		bool removeRing(location l);
+		bool placeRing(int ring_no, coordinates c);
+		bool moveRing(coordinates start, coordinates end);
+		bool removeMarkerSeq(coordinates start, coordinates end);
+		bool removeRing(coordinates c);
+		void execute_move_place_ring(location l);
+		void execute_move_move_ring(location start, location end);
+		void execute_move_remove_row_ring(location start, location end, location ring);
 
 	public:
 		Board();
 		Board(int board_size, int given_rings, int rings_to_remove, int markers_in_line);
-		Board* execute_move();
+		
+		//execute a move on the board
+		void execute_move(string s);
 
+		//give the goodness of the current state of the board
 		double eval_func();
 
+		//get the valid moves on the current board
 		vector<pair<Board*, string>> get_valid_moves(int player_id);
-		
+
+		//check if L rings have been removed or the board is full
 		bool check_terminal();
 };
 
