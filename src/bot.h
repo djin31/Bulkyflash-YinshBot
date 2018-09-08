@@ -5,17 +5,20 @@
 using namespace std;
 
 class Bot{
-  Treenode* root;
-  int player_id;
+  public:
+    Treenode* root;
+    int player_id;
+    double time_limit;
 
-  Bot(int player_id);  
+    Bot(int player_id, double time);  
 
-  void minVal(Treenode* node, double alpha, double beta, int depth_left);  
+    void minVal(Treenode* node, double alpha, double beta, int depth_left);  
 
-  void maxVal(Treenode* node, double alpha, double beta, int depth_left);
+    void maxVal(Treenode* node, double alpha, double beta, int depth_left);
 
-  void make_move();
+    void play();
 
-  void place_rings();
+    void read_move();
+
 };
 #endif

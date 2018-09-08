@@ -13,6 +13,6 @@ class Treenode{
 
 		Treenode();
 
-		void generate_children();
+		void generate_children(int player_id);
 };
 #endif

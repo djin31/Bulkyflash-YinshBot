@@ -3,6 +3,10 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <vector>
+#include <algorithm>
+#include <climits>
+
 using namespace std;
 
 struct location
