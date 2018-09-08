@@ -5,6 +5,7 @@
 #include <cstdlib>
 using namespace std;
 
+<<<<<<< HEAD
 struct location
 {
 	int hexagon;
@@ -24,7 +25,7 @@ class Board{
 		int white_rings_in;
 		int black_rings_out;
 		int white_rings_out;
-		int turn_id;
+		int turn_id;			
 
 		vector<pair<int,int>> white_rings;
 		vector<pair<int,int>> black_rings;
@@ -37,12 +38,15 @@ class Board{
 		bool removeRing(location l);
 
 	public:
+		Board();
 		Board(int board_size, int given_rings, int rings_to_remove, int markers_in_line);
 		Board* execute_move();
 
-		int eval_func();
+		double eval_func();
 
-		vector<Board*> get_valid_moves(int player_id);
+		vector<pair<Board*, string>> get_valid_moves(int player_id);
+		
+		bool check_terminal();
 };
 
 #endif

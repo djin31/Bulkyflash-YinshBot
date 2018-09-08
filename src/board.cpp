@@ -1,10 +1,6 @@
 #include "board.h"
 
-Board::Board(int board_size=5, int given_rings=5, int rings_to_remove=3, int markers_in_line=5){
-	this->board_size=board_size;		
-	this->given_rings=given_rings;		
-	this->rings_to_remove=rings_to_remove;	
-	this->markers_in_line=markers_in_line;
+Board::Board(){
 
 	black_markers=0;
 	white_markers=0;
@@ -14,7 +10,7 @@ Board::Board(int board_size=5, int given_rings=5, int rings_to_remove=3, int mar
 	// initialise board to all zeroes
 	board = vector<vector<int>>((board_size+1));
 	board[0].push_back(0);
-	for (int i=1;i<=board_size;i++)
+	for (int i=1;i<=BOARD_SIZE;i++)
 	{
 		for (int j=0;j<6*i;j++)
 			board[i].push_back(0);
