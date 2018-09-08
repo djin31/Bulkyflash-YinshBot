@@ -2,6 +2,7 @@
 #define BOT_H
 
 #include "treenode.h"
+using namespace std;
 
 class Bot{
   Treenode* root;
@@ -14,5 +15,7 @@ class Bot{
   void maxVal(Treenode* node, double alpha, double beta, int depth_left);
 
   void make_move();
+
+  void place_rings();
 };
 #endif
