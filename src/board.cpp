@@ -28,10 +28,12 @@ bool Board::placeRing(int ring_no, coordinates c){
 		return false;
 	
 	board[c.x][c.y] = ring_no;
-	if (ring_no == 2)
-		black_rings_in++;
-	else
-		black_rings_out++;
+	if (ring_no == 2){
+		black_rings_in++; black_rings.push_back(c);
+	}
+	else{
+		white_rings_in++; white_rings.push_back(c);
+	}
 	
 	return true;
 }
@@ -99,6 +101,12 @@ bool Board::removeMarkerSeq(coordinates start, coordinates end){
 
 bool Board::removeRing(coordinates c){
 	board[c.x][c.y] = 0;
+	if (turn_id == -1){
+		white_rings_in--; white_rings_out++;
+	}
+	else{
+		black_rings_in--; black_rings_out++;
+	}
 }
 
 void Board::execute_move_place_ring(location l){
@@ -150,6 +158,17 @@ void Board::execute_move(string s){
 			}
 		}
 	}
+	turn_id *= -1;
+}
+
+vector<pair<Board*, string>> Board::get_valid_moves(){
+
+}
+
+bool Board::check_terminal(){
+	if(white_rings_out >= rings_to_remove || black_rings_out >= rings_to_remove)
+		return true;
+	return false;
 }
 
 void Board::iterate_over_line(int value, int c, int line_no, int start, int end){	// value = -1 for flip, 0 for remove //  c = 0 for x, 1 for y //

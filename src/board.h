@@ -38,7 +38,7 @@ class Board{
 		int black_rings_out;
 		int white_rings_out;
 		
-		int turn_id;	// 0 << white, 1 << black			
+		int turn_id;	// -1 << white, 1 << black			
 
 		vector<coordinates> white_rings;
 		vector<coordinates> black_rings;
@@ -69,9 +69,9 @@ class Board{
 		double eval_func();
 
 		//get the valid moves on the current board
-		vector<pair<Board*, string>> get_valid_moves(int player_id);
+		vector<pair<Board*, string>> get_valid_moves();
 
-		//check if L rings have been removed or the board is full
+		//check if L rings have been removed
 		bool check_terminal();
 };
 
