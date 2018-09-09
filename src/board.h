@@ -6,8 +6,12 @@
 #include <vector>
 #include <algorithm>
 #include <climits>
+#include <string>
+#include <sstream>
+#include <iterator>
 
 using namespace std;
+template<typename Out>
 
 struct location
 {
@@ -42,6 +46,8 @@ class Board{
 		//helper functions
 		void iterate_over_line(int value, int c, int line_no, int start, int end);	// value = -1 for flip, 0 for remove //  c = 0 for iterating over x, 1 for y // iteration only along x or y
 		coordinates location_to_coordinates(location l);
+		void split(const std::string &s, char delim, Out result);
+		std::vector<std::string> split(const std::string &s, char delim);
 
 		// ring_no : black ring << 2, white ring << -2
 		// These function do not check the validity of the move, they can only tell if the location is outside the board
@@ -54,10 +60,9 @@ class Board{
 		void execute_move_remove_row_ring(location start, location end, location ring);
 
 	public:
-		Board();
 		Board(int board_size, int given_rings, int rings_to_remove, int markers_in_line);
 		
-		//execute a move on the board
+		//execute a move on the board // s has space after every character
 		void execute_move(string s);
 
 		//give the goodness of the current state of the board

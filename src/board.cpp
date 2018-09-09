@@ -13,7 +13,7 @@ Board::Board(int board_size, int given_rings, int rings_to_remove, int markers_i
 	black_rings_out = 0;
 	white_rings_out = 0;
 	
-	turn_id = 0;	// -1 << white, 1 << black
+	turn_id = -1;	// -1 << white, 1 << black
 
 	// initialise board to all zeroes
 	std::vector<int> zeroes;
@@ -106,6 +106,52 @@ void Board::execute_move_place_ring(location l){
 	placeRing(ring_no, location_to_coordinates(l));
 }
 
+void Board::execute_move_move_ring(location start, location end){
+	moveRing(location_to_coordinates(start), location_to_coordinates(end));
+}
+
+void Board::execute_move_remove_row_ring(location start, location end, location ring){
+	removeMarkerSeq(location_to_coordinates(start), location_to_coordinates(end));
+	removeRing(location_to_coordinates(ring));
+}
+
+double Board::eval_func(){
+	double score = 0.0;
+	score += 10.0*black_rings_out - 2.0*black_rings_in;
+	return turn_id*score;
+}
+
+void Board::execute_move(string s){
+	std::vector<std::string> tokens = split(s, ' ');
+	if(tokens[0].compare("P") == 0){
+		location l;
+		l.hexagon = std::stoi(tokens[1]);
+		l.position = std::stoi(tokens[2]);
+		execute_move_place_ring(l);
+		return;
+	}
+	if(tokens[0].compare("S") == 0 && tokens[3].compare("M") == 0){
+		location start,end;
+		start.hexagon = std::stoi(tokens[1]);
+		start.position = std::stoi(tokens[2]);
+		end.hexagon = std::stoi(tokens[4]);
+		end.position = std::stoi(tokens[5]);
+		execute_move_move_ring(start, end);
+		if(tokens.size() > 6){
+			if(tokens[7].compare("RS") == 0 && tokens[10].compare("RE") == 0 && tokens[13].compare("X") == 0){
+				location start,end,ring;
+				start.hexagon = std::stoi(tokens[8]);
+				start.position = std::stoi(tokens[9]);
+				end.hexagon = std::stoi(tokens[11]);
+				end.position = std::stoi(tokens[12]);
+				ring.hexagon = std::stoi(tokens[14]);
+				ring.position = std::stoi(tokens[15]);
+				execute_move_remove_row_ring(start, end, ring);
+			}
+		}
+	}
+}
+
 void Board::iterate_over_line(int value, int c, int line_no, int start, int end){	// value = -1 for flip, 0 for remove //  c = 0 for x, 1 for y //
 	for(int i = start; i <= end; i++){
 		if(c == 0)
@@ -117,15 +163,31 @@ void Board::iterate_over_line(int value, int c, int line_no, int start, int end)
 
 coordinates Board::location_to_coordinates(location l){
 	coordinates c;
+	c.x = board_size;
+	c.y = board_size;
 	int h = l.hexagon, p = l.position;
 	switch(p/h){
-		case 0 : c.x = p; break;
-		case 1 : break;
-		case 2 : break; 
-		case 3 : break;
-		case 4 : break;
-		case 5 : break;
+		case 0 : c.x += p; c.y += p-h; break;
+		case 1 : c.x += h; c.y += p-h; break;
+		case 2 : c.x += 3*h-p; c.y += h; break; 
+		case 3 : c.x += 3*h-p; c.y += 4*h-p; break;
+		case 4 : c.x += -1*h; c.y += 4*h-p; break;
+		case 5 : c.x += p-6*h; c.y += -1*h; break;
 		default : break;
 	}
 	return c;
+}
+
+void Board::split(const std::string &s, char delim, Out result) {
+    std::stringstream ss(s);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        *(result++) = item;
+    }
+}
+
+std::vector<std::string> Board::split(const std::string &s, char delim) {
+    std::vector<std::string> elems;
+    split(s, delim, std::back_inserter(elems));
+    return elems;
 }
