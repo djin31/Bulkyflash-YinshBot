@@ -83,6 +83,9 @@ class Board{
 
 		//function to copy the board
 		Board* copy_board();
+
+		//function to print the board
+		void printBoard();
 };
 
 #endif

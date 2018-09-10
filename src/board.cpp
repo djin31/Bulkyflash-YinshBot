@@ -126,7 +126,7 @@ void Board::execute_move_remove_row_ring(location start, location end, location 
 
 double Board::eval_func(){
 	double score = 0.0;
-	score += 10.0*(white_rings_out-black_rings_out) - 2.0*(white_ma-black_rings_in;
+	score += 10.0*(white_rings_out-black_rings_out) - 2.0*(white_ma-black_rings_in);
 	return turn_id*score;
 }
 
@@ -326,6 +326,22 @@ Board* Board::copy_board(){
 		newBoard->board.push_back(v);
 	}
 	return newBoard;
+}
+
+void Board::printBoard(){
+	for(int i = 0; i < 2*board_size+1; i++){
+		for(int j = 0; j < 2*board_size+1; j++){
+			coordinates c;
+			c.x = i;
+			c.y = j;
+			if (checkValid(c))
+				cerr << board[i][j] << " ";
+			else
+				cerr << "  ";
+			if(j == 2*board_sizea)
+				cerr << endl;
+		}
+	}
 }
 
 void Board::iterate_over_line(int value, int c, int line_no, int start, int end){	// value = -1 for flip, 0 for remove //  c = 0 for x, 1 for y //
