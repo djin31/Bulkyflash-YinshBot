@@ -1,6 +1,9 @@
 #include "treenode.h"
 
-Treenode::Treenode(){}
+Treenode::Treenode(){
+	move_description="";
+	value = 0;
+}
 
 void Treenode::generate_children(){
 	vector<pair<Board*,string>> child_config = board->get_valid_moves();

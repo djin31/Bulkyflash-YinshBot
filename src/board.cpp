@@ -14,7 +14,7 @@ Board::Board(){
 	white_rings_out = 0;
 	
 	turn_id = -1;	// -1 << white, 1 << black
-	currentScore = 0.0;
+	current_score = 0.0;
 
 	// initialise board to all zeroes
 	std::vector<int> zeroes;
@@ -126,7 +126,7 @@ void Board::execute_move_remove_row_ring(location start, location end, location 
 
 double Board::eval_func(){
 	double score = 0.0;
-	score += 10.0*(white_rings_out-black_rings_out) - 2.0*(white_ma-black_rings_in);
+	score += 10.0*(white_rings_out-black_rings_out) - 2.0*(white_markers-black_markers);
 	return turn_id*score;
 }
 
@@ -307,13 +307,13 @@ bool Board::check_terminal(){
 }
 
 Board* Board::copy_board(){
-	Board *newBoard = new Board(board_size, given_rings, rings_to_remove, markers_in_line);
+	Board *newBoard = new Board();
 	newBoard->black_rings_in = this->black_rings_in;
 	newBoard->black_rings_out = this->black_rings_out;
 	newBoard->white_rings_in = this->white_rings_in;
 	newBoard->white_rings_out = this->white_rings_out;
 	newBoard->turn_id = this->turn_id;
-	newBoard->currentScore = this->currentScore;
+	newBoard->current_score = this->current_score;
 	for(int i = 0; i < this->white_rings.size(); i++)
 		newBoard->white_rings.push_back(this->white_rings[i]);
 	for(int i = 0; i < this->black_rings.size(); i++)
@@ -338,7 +338,7 @@ void Board::printBoard(){
 				cerr << board[i][j] << " ";
 			else
 				cerr << "  ";
-			if(j == 2*board_sizea)
+			if(j == 2*board_size)
 				cerr << endl;
 		}
 	}
@@ -408,27 +408,13 @@ location Board::coordinates_to_location(coordinates c){
 	return l;
 }
 
-void Board::split(const std::string &s, char delim, Out result) {
-    std::stringstream ss(s);
-    std::string item;
-    while (std::getline(ss, item, delim)) {
-        *(result++) = item;
-    }
-}
-
-std::vector<std::string> Board::split(const std::string &s, char delim) {
-    std::vector<std::string> elems;
-    split(s, delim, std::back_inserter(elems));
-    return elems;
-}
-
 bool Board::checkValid(coordinates c){
 	location l = coordinates_to_location(c);
 	return (l.hexagon<board_size && l.position<6*l.hexagon);
 }
 
-vector<pair<location,location>> Board::get_markers_in_a_row(){
-	vector<pair<location,location>> retVal;
+vector<pair<coordinates, coordinates>> Board::get_markers_in_a_row(){
+	vector<pair<coordinates,coordinates>> retVal;
 	coordinates start_coord,end_coord;
 	location start,end;
 	for (int i=0;i<2*board_size+1;i++){
@@ -437,9 +423,6 @@ vector<pair<location,location>> Board::get_markers_in_a_row(){
 			start_coord.y=j;
 			if (!(checkValid(start_coord) && board[i][j]==turn_id))
 				continue;
-
-			start.x=i;
-			start.y=j;
 			
 			//moving down
 			int counter=1,k=j+1,l;
@@ -558,7 +541,7 @@ vector<pair<location,location>> Board::get_markers_in_a_row(){
 	return retVal;
 }
 
-std::pair<Board*, string> moveRing_to_pair(coordinates start, coordinates end){
+std::pair<Board*, string> Board::moveRing_to_pair(coordinates start, coordinates end){
 	string s = "";
 	location inital_location = coordinates_to_location(start);
 	s += "S " + to_string(inital_location.hexagon) + " " + to_string(inital_location.position) + " ";

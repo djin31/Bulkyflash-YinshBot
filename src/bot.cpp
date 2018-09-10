@@ -9,6 +9,9 @@ Bot::Bot(int player_id, double time_limit){
 	root->board = new Board();  
 	this->player_id = player_id;
 	this->time_limit = time_limit;
+
+    srand(time(NULL));
+
 }
 
 bool node_compare(Treenode* a, Treenode* b)
@@ -67,17 +70,43 @@ void Bot::read_move(){
 	}
 	cout<<"OPPONENT'S MOVE NOT FOUND AMONGST CHILDREN\n";
 	// should generate the new config and remake tree
-
-	Treenode* new_root = new Treenode();
+	root->board->execute_move(move);
+	root->children = vector<Treenode*>();
 	
 }
 
-void Bot::play(){
+void Bot::place_ring(){
 	string move;
+	
 	if (player_id==1)
 	{
+		getline(cin,move);
+		root->board->execute_move(move);
+	}
+	int rings_placed=0;
+	int rings_to_be_placed=5;
+	location l;
+	coordinates c;
+	while(rings_placed<rings_to_be_placed){
+		l.hexagon=rand()%6;
+		l.position=rand()%(6*l.hexagon);
+		c=root->board->location_to_coordinates(l);
+		while (root->board->board[c.x][c.y]!=0)
+		{
+			l.hexagon=rand()%6;
+			l.position=rand()%(6*l.hexagon);
+			c=root->board->location_to_coordinates(l);
+		}
+		move = "P " + to_string(l.hexagon) + " " + to_string(l.position);
+		root->board->execute_move(move);
+		
 		read_move();
 	}
+}
+
+void Bot::play(){
+	
+	place_ring();
 
 	while(true){
 		if (player_id==1)

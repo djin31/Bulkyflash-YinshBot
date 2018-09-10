@@ -7,12 +7,10 @@
 #include <algorithm>
 #include <climits>
 #include <string>
-#include <sstream>
-#include <iterator>
+#include "util.h"
+
 
 using namespace std;
-
-template<typename Out>
 		
 struct location
 {
@@ -27,11 +25,10 @@ struct coordinates
 	int y;	//line 60* to the horizontal (CCW)
 };
 
-int board_size=5;		// N
-int given_rings=5;		// M
-int rings_to_remove=3;	// L
-int markers_in_line=5;	// K
-
+const int board_size=5;			// N
+const int given_rings=5;		// M
+const int rings_to_remove=3;	// L
+const int markers_in_line=5;	// K
 
 class Board{
 	public:
@@ -54,8 +51,6 @@ class Board{
 		void iterate_over_line(int value, int c, int line_no, int start, int end);	// value = -1 for flip, 0 for remove //  c = 0 for iterating over x, 1 for y // iteration only along x or y
 		coordinates location_to_coordinates(location l);
 		location coordinates_to_location(coordinates c);
-		void split(const std::string &s, char delim, Out result);
-		std::vector<std::string> split(const std::string &s, char delim);
 		std::pair<Board*, string> moveRing_to_pair(coordinates start, coordinates end);
 
 		// ring_no : black ring << 2, white ring << -2
@@ -68,7 +63,7 @@ class Board{
 		void execute_move_move_ring(location start, location end);
 		void execute_move_remove_row_ring(location start, location end, location ring);
 
-		vector<pair<location,location>> get_markers_in_a_row();
+		vector<pair<coordinates, coordinates>> get_markers_in_a_row();
 		bool checkValid(coordinates c);
 	//=========== use ony these functions publically===========
 		Board();
