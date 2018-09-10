@@ -162,8 +162,142 @@ void Board::execute_move(string s){
 	turn_id *= -1;
 }
 
-vector<pair<double, string>> Board::get_valid_moves(){
+vector<pair<Board*, string>> Board::get_valid_moves(){		//does not give children when all the rings have not been placed // use only for move ring and remove ring
+	std::vector<pair<Board*, string>> children;
+	string s = "";
+	coordinates initial;
+	location inital_location;
+	if (turn_id == -1){
+		for(int i = 0; i < white_rings_in; i++){
+			initial = white_rings[i];
 
+			//moving up
+			coordinates final;
+			final.x = initial.x; final.y = initial.y-1;
+			bool flag = true;
+			while (checkValid(final) && board[x][y]==0)
+			{	
+				pair<Board*, string> p = moveRing_to_pair(initial, final);
+				children.push_back(p);
+				final.y--;
+			}
+			while (checkValid(final) && board[x][y]!=0){
+				if(board[x][y] == 2 || board[x][y] == -2)
+					flag = false;
+				final.y--;
+			}
+			if(checkValid(final) && board[x][y] != -2 && board[x][y] != 2 && flag)
+			{	
+				pair<Board*, string> p = moveRing_to_pair(initial, final);
+				children.push_back(p);
+			}
+			//moving down
+			coordinates final;
+			final.x = initial.x; final.y = initial.y+1;
+			bool flag = true;
+			while (checkValid(final) && board[x][y]==0)
+			{	
+				pair<Board*, string> p = moveRing_to_pair(initial, final);
+				children.push_back(p);
+				final.y++;
+			}
+			while (checkValid(final) && board[x][y]!=0){
+				if(board[x][y] == 2 || board[x][y] == -2)
+					flag = false;
+				final.y++;
+			}
+			if(checkValid(final) && board[x][y] != -2 && board[x][y] != 2 && flag)
+			{	
+				pair<Board*, string> p = moveRing_to_pair(initial, final);
+				children.push_back(p);
+			}
+			//moving along increasing x
+			coordinates final;
+			final.x = initial.x + 1; final.y = initial.y;
+			bool flag = true;
+			while (checkValid(final) && board[x][y]==0)
+			{	
+				pair<Board*, string> p = moveRing_to_pair(initial, final);
+				children.push_back(p);
+				final.x++;
+			}
+			while (checkValid(final) && board[x][y]!=0){
+				if(board[x][y] == 2 || board[x][y] == -2)
+					flag = false;
+				final.x++;
+			}
+			if(checkValid(final) && board[x][y] != -2 && board[x][y] != 2 && flag)
+			{	
+				pair<Board*, string> p = moveRing_to_pair(initial, final);
+				children.push_back(p);
+			}
+			//moving along decreasing x
+			coordinates final;
+			final.x = initial.x-1; final.y = initial.y;
+			bool flag = true;
+			while (checkValid(final) && board[x][y]==0)
+			{	
+				pair<Board*, string> p = moveRing_to_pair(initial, final);
+				children.push_back(p);
+				final.x--;
+			}
+			while (checkValid(final) && board[x][y]!=0){
+				if(board[x][y] == 2 || board[x][y] == -2)
+					flag = false;
+				final.x--;
+			}
+			if(checkValid(final) && board[x][y] != -2 && board[x][y] != 2 && flag)
+			{	
+				pair<Board*, string> p = moveRing_to_pair(initial, final);
+				children.push_back(p);
+			}
+			//moving along increasing z
+			coordinates final;
+			final.x = initial.x+1; final.y = initial.y+1;
+			bool  flag = true;
+			while (checkValid(final) && board[x][y]==0)
+			{	
+				pair<Board*, string> p = moveRing_to_pair(initial, final);
+				children.push_back(p);
+				final.x++;
+				final.y++;
+			}
+			while (checkValid(final) && board[x][y]!=0){
+				if(board[x][y] == 2 || board[x][y] == -2)
+					flag = false;
+				final.x++;
+				final.y++;
+			}
+			if(checkValid(final) && board[x][y] != -2 && board[x][y] != 2 && flag)
+			{	
+				pair<Board*, string> p = moveRing_to_pair(initial, final);
+				children.push_back(p);
+			}
+			//moving along decreasing z
+			coordinates final;
+			final.x = initial.x-1; final.y = initial.y-1;
+			bool flag = true;
+			while (checkValid(final) && board[x][y]==0)
+			{	
+				pair<Board*, string> p = moveRing_to_pair(initial, final);
+				children.push_back(p);
+				final.x--;
+				final.y--;
+			}
+			while (checkValid(final) && board[x][y]!=0){
+				if(board[x][y] == 2 || board[x][y] == -2)
+					flag = false;
+				final.x--;
+				final.y--;
+			}
+			if(checkValid(final) && board[x][y] != -2 && board[x][y] != 2 && flag)
+			{	
+				pair<Board*, string> p = moveRing_to_pair(initial, final);
+				children.push_back(p);
+			}
+		}
+	}
+	//selecting a ring
 }
 
 bool Board::check_terminal(){
@@ -270,4 +404,17 @@ std::vector<std::string> Board::split(const std::string &s, char delim) {
     std::vector<std::string> elems;
     split(s, delim, std::back_inserter(elems));
     return elems;
+}
+
+std::pair<Board*, string> moveRing_to_pair(coordinates start, coordinates end){
+	string s = "";
+	location inital_location = coordinates_to_location(start);
+	s += "S " + to_string(inital_location.hexagon) + " " + to_string(inital_location.position) + " ";
+	location newLocation = coordinates_to_location(end);
+	s += "M " + to_string(newLocation.hexagon) + " " + to_string(newLocation.position) + " ";
+	Board* newBoard = this->copy_board();
+	newBoard->moveRing(start, end);
+	//check for five rings in a rows
+	pair<Board*, string> p(newBoard, s);
+	return p;
 }

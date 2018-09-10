@@ -54,6 +54,7 @@ class Board{
 		location coordinates_to_location(coordinates c);
 		void split(const std::string &s, char delim, Out result);
 		std::vector<std::string> split(const std::string &s, char delim);
+		std::pair<Board*, string> moveRing_to_pair(coordinates start, coordinates end);
 
 		// ring_no : black ring << 2, white ring << -2
 		// These function do not check the validity of the move, they can only tell if the location is outside the board
@@ -75,7 +76,7 @@ class Board{
 		double eval_func();
 
 		//get the valid moves on the current board
-		vector<pair<double, string>> get_valid_moves();
+		vector<pair<Board*, string>> get_valid_moves();		//does not give children when all the rings have not been placed // use only for move ring and remove ring
 
 		//check if L rings have been removed
 		bool check_terminal();
