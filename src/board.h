@@ -13,7 +13,7 @@
 using namespace std;
 
 template<typename Out>
-
+		
 struct location
 {
 	int hexagon;
@@ -27,13 +27,15 @@ struct coordinates
 	int y;	//line 60* to the horizontal (CCW)
 };
 
+int board_size=5;		// N
+int given_rings=5;		// M
+int rings_to_remove=3;	// L
+int markers_in_line=5;	// K
+
+
 class Board{
 	public:
 		vector<vector<int>> board;		// 0 -> empty, 1 -> black marker, 2 -> black ring, -1 -> white marker, -2 -> white ring
-		int board_size;			// N
-		int given_rings;		// M
-		int rings_to_remove;	// L
-		int markers_in_line;	// K
 		
 		int black_markers;
 		int white_markers;
@@ -54,6 +56,7 @@ class Board{
 		location coordinates_to_location(coordinates c);
 		void split(const std::string &s, char delim, Out result);
 		std::vector<std::string> split(const std::string &s, char delim);
+		std::pair<Board*, string> moveRing_to_pair(coordinates start, coordinates end);
 
 		// ring_no : black ring << 2, white ring << -2
 		// These function do not check the validity of the move, they can only tell if the location is outside the board
@@ -77,13 +80,16 @@ class Board{
 		double eval_func();
 
 		//get the valid moves on the current board
-		vector<pair<double, string>> get_valid_moves();
+		vector<pair<Board*, string>> get_valid_moves();		//does not give children when all the rings have not been placed // use only for move ring and remove ring
 
 		//check if L rings have been removed
 		bool check_terminal();
 
 		//function to copy the board
 		Board* copy_board();
+
+		//function to print the board
+		void printBoard();
 };
 
 #endif
