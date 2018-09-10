@@ -21,7 +21,7 @@ void Bot::minVal(Treenode* node, double alpha, double beta, int depth_left){
 		node->value = node->board->eval_func();
 	if (node->children.size()==0)
 	{
-		node->generate_children(1);
+		node->generate_children();
 	}
 	for (Treenode* child: node->children)
 	{
@@ -41,7 +41,7 @@ void Bot::maxVal(Treenode* node, double alpha, double beta, int depth_left){
 		node->value = node->board->eval_func();
 	if (node->children.size()==0)
 	{
-		node->generate_children(0);
+		node->generate_children();
 	}
 	for (Treenode* child: node->children)
 	{
@@ -69,7 +69,7 @@ void Bot::read_move(){
 	// should generate the new config and remake tree
 
 	Treenode* new_root = new Treenode();
-	new_root->board = root
+	
 }
 
 void Bot::play(){

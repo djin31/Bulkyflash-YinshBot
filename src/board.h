@@ -71,7 +71,7 @@ class Board{
 		vector<pair<location,location>> get_markers_in_a_row();
 		bool checkValid(coordinates c);
 	//=========== use ony these functions publically===========
-		Board(int board_size, int given_rings, int rings_to_remove, int markers_in_line);
+		Board();
 		
 		//execute a move on the board // s has space after every character
 		void execute_move(string s);
