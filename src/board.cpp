@@ -127,7 +127,66 @@ void Board::execute_move_remove_row_ring(location start, location end, location 
 double Board::eval_func(){
 	double score = 0.0;
 	score += 10.0*(white_rings_out-black_rings_out) - 2.0*(white_markers-black_markers);
-	return turn_id*score;
+	return score;
+}
+
+int Board::blocked_rings(coordinates c){
+	int ring_id = board[c.x][c.y];
+
+	coordinates it;
+	int retVal=0;
+
+	//moving up
+	it.x=c.x;
+	it.y=c.y-1;
+	while (checkValid(it) && abs(board[it.x][it.y])==1)
+		it.y--;
+	if (checkValid(it) && board[it.x][it.y]!=0)
+		retVal-=ring_id/board[it.x][it.y];
+	
+	//moving down
+	it.x=c.x;
+	it.y=c.y+1;
+	while (checkValid(it) && abs(board[it.x][it.y])==1)
+		it.y++;
+	if (checkValid(it) && board[it.x][it.y]!=0)
+		retVal-=ring_id/board[it.x][it.y];
+	
+	//moving right
+	it.x=c.x+1;
+	it.y=c.y;
+	while (checkValid(it) && abs(board[it.x][it.y])==1)
+		it.x++;
+	if (checkValid(it) && board[it.x][it.y]!=0)
+		retVal-=ring_id/board[it.x][it.y];
+	
+	//moving left
+	it.x=c.x-1;
+	it.y=c.y;
+	while (checkValid(it) && abs(board[it.x][it.y])==1)
+		it.x--;
+	if (checkValid(it) && board[it.x][it.y]!=0)
+		retVal-=ring_id/board[it.x][it.y];
+	
+	// moving right down
+	it.x=c.x+1;
+	it.y=c.y+1;
+	while (checkValid(it) && abs(board[it.x][it.y])==1)
+	{	
+		it.x++;it.y++; 
+	}
+	if (checkValid(it) && board[it.x][it.y]!=0)
+		retVal-=ring_id/board[it.x][it.y];
+	
+	// moving left up
+	it.x=c.x-1;
+	it.y=c.y-1;
+	while (checkValid(it) && abs(board[it.x][it.y])==1)
+	{	
+		it.x--;it.y--; 
+	}
+	if (checkValid(it) && board[it.x][it.y]!=0)
+		retVal-=ring_id/board[it.x][it.y];
 }
 
 void Board::execute_move(string s){

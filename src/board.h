@@ -74,6 +74,8 @@ class Board{
 		//give the goodness of the current state of the board
 		double eval_func();
 
+		// gives the number of rings which are blocked
+		int blocked_rings(coordinates c);
 		//get the valid moves on the current board
 		vector<pair<Board*, string>> get_valid_moves();		//does not give children when all the rings have not been placed // use only for move ring and remove ring
 
