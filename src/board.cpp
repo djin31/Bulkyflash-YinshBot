@@ -232,7 +232,7 @@ location Board::coordinates_to_location(coordinates c){
 	if (c.x>=0 && c.y>=0)
 	{
 		l.hexagon=abs(c.x+c.y);
-		l.position=c.y;
+		l.position=c.x;
 	}
 	else if (c.x>=0 && c.y<0)
 	{
@@ -270,4 +270,140 @@ std::vector<std::string> Board::split(const std::string &s, char delim) {
     std::vector<std::string> elems;
     split(s, delim, std::back_inserter(elems));
     return elems;
+}
+bool Board::checkValid(coordinates c){
+	location l = coordinates_to_location(c);
+	return (l.hexagon<board_size && l.position<6*l.hexagon);
+}
+
+
+vector<pair<location,location>> Board::get_markers_in_a_row(){
+	vector<pair<location,location>> retVal;
+	coordinates start_coord,end_coord;
+	location start,end;
+	for (int i=0;i<2*board_size+1;i++){
+		for (int j=0;i<2*board_size+1;j++){
+			start_coord.x=i;
+			start_coord.y=j;
+			if (!(checkValid(start_coord) && board[i][j]==turn_id))
+				continue;
+
+			start.x=i;
+			start.y=j;
+			
+			//moving down
+			int counter=1,k=j+1,l;
+			end_coord.x=i;
+			end_coord.y=j-1;
+			if (!checkValid(end_coord) || board[i][j-1]!=turn_id){
+				end_coord.y=k;
+				while(checkValid(end_coord) && board[i][k]==turn_id)
+				{
+					counter++;
+					end_coord.y=k++;
+					if (counter==markers_in_line)
+						break;
+				}
+			}
+			if (counter==markers_in_line)
+				retVal.push_back(make_pair(start_coord,end_coord));
+
+			// moving up
+			counter=1;
+			k=j-1;
+			end_coord.x=i;
+			end_coord.y=j+1;
+			if (!checkValid(end_coord) || board[i][j-1]!=turn_id){
+				end_coord.y=k;
+				while(checkValid(end_coord) && board[i][k]==turn_id)
+				{
+					counter++;
+					end_coord.y=k--;
+					if (counter==markers_in_line)
+						break;
+				}
+			}
+			if (counter==markers_in_line)
+				retVal.push_back(make_pair(start_coord,end_coord));
+
+			// moving right sideways
+			counter=1;
+			k=i+1;
+			end_coord.x=i-1;
+			end_coord.y=j;
+			if (!checkValid(end_coord) || board[i-1][j]!=turn_id){
+				end_coord.x=k;
+				while(checkValid(end_coord) && board[k][j]==turn_id)
+				{
+					counter++;
+					end_coord.x=k++;
+					if (counter==markers_in_line)
+						break;
+				}
+			}
+			if (counter==markers_in_line)			
+				retVal.push_back(make_pair(start_coord,end_coord));
+			
+			// moving left sideways
+			counter=1;
+			k=i-1;
+			end_coord.x=i+1;
+			end_coord.y=j;
+			if (!checkValid(end_coord) || board[i+1][j]!=turn_id){
+				end_coord.x=k;
+				while(checkValid(end_coord) && board[k][j]==turn_id)
+				{
+					counter++;
+					end_coord.x=k--;
+					if (counter==markers_in_line)
+						break;
+				}
+			}
+			if (counter==markers_in_line)			
+				retVal.push_back(make_pair(start_coord,end_coord));
+			
+			// moving diagonal right down
+			counter=1;
+			k=i+1;
+			l=j+1;
+			end_coord.x=i-1;
+			end_coord.y=j-1;
+			if (!checkValid(end_coord) || board[i-1][j-1]!=turn_id){
+				end_coord.x=k;
+				end_coord.y=l;
+				while(checkValid(end_coord) && board[k][l]==turn_id)
+				{
+					counter++;
+					end_coord.x=k++;
+					end_coord.y=l++;
+					if (counter==markers_in_line)
+						break;
+				}
+			}
+			if (counter==markers_in_line)			
+				retVal.push_back(make_pair(start_coord,end_coord));
+			
+			// moving diagonal right down
+			counter=1;
+			k=i-1;
+			l=j-1;
+			end_coord.x=i+1;
+			end_coord.y=j+1;
+			if (!checkValid(end_coord) || board[i+1][j+1]!=turn_id){
+				end_coord.x=k;
+				end_coord.y=l;
+				while(checkValid(end_coord) && board[k][l]==turn_id)
+				{
+					counter++;
+					end_coord.x=k--;
+					end_coord.y=l--;
+					if (counter==markers_in_line)
+						break;
+				}
+			}
+			if (counter==markers_in_line)			
+				retVal.push_back(make_pair(start_coord,end_coord));
+		}
+	}
+	return retVal;
 }
