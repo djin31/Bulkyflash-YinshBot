@@ -7,7 +7,7 @@ TARGET := runner
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS :=  -std=c++11 -Ofast -march=native
+CFLAGS :=  -std=c++11 -Ofast -march=native #-g
 # LIB := -pthread -lmongoclient -L lib -lboost_thread-mt -lboost_filesystem-mt -lboost_system-mt
 INC := -I include
 
@@ -17,17 +17,11 @@ $(TARGET): $(OBJECTS)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	@mkdir -p $(BUILDDIR)
-	@mkdir -p $(BUILDDIR)/3D
-	@mkdir -p $(BUILDDIR)/2D
-	@mkdir -p $(BUILDDIR)/draw
 
 	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
 clean:
 	@echo " Cleaning..."; 
 	@echo " $(RM) -r $(BUILDDIR) $(TARGET)"; $(RM) -r $(BUILDDIR) $(TARGET)
-
-debug: CFLAGS += -DDEBUG -g
-debug: all
 
 .PHONY: clean

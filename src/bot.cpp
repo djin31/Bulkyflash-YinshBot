@@ -66,6 +66,10 @@ void Bot::read_move(){
 		}
 	}
 	cout<<"OPPONENT'S MOVE NOT FOUND AMONGST CHILDREN\n";
+	// should generate the new config and remake tree
+
+	Treenode* new_root = new Treenode();
+	new_root->board = root
 }
 
 void Bot::play(){

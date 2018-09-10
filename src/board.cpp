@@ -125,7 +125,7 @@ void Board::execute_move_remove_row_ring(location start, location end, location 
 
 double Board::eval_func(){
 	double score = 0.0;
-	score += 10.0*black_rings_out - 2.0*black_rings_in;
+	score += 10.0*(white_rings_out-black_rings_out) - 2.0*(white_ma-black_rings_in;
 	return turn_id*score;
 }
 
@@ -174,9 +174,13 @@ bool Board::check_terminal(){
 void Board::iterate_over_line(int value, int c, int line_no, int start, int end){	// value = -1 for flip, 0 for remove //  c = 0 for x, 1 for y //
 	for(int i = start; i <= end; i++){
 		if(c == 0)
+		{
 			board[i][line_no] *= value;
+		}
 		else
+		{
 			board[line_no][i] *= value;
+		}
 	}
 }
 
@@ -195,6 +199,40 @@ coordinates Board::location_to_coordinates(location l){
 		default : break;
 	}
 	return c;
+}
+
+location Board::coordinates_to_location(coordinates c){
+	c.x-=board_size;
+	c.y=board_size-c.y;
+
+	location l;
+	if (c.x>=0 && c.y>=0)
+	{
+		l.hexagon=abs(c.x+c.y);
+		l.position=c.y;
+	}
+	else if (c.x>=0 && c.y<0)
+	{
+		l.hexagon=max(abs(c.x),abs(c.y));
+		if (c.x==l.hexagon)
+			l.position=l.hexagon-c.y;
+		else
+			l.position=3*l.hexagon-c.x;
+	}
+	else if (c.x<0 && c.y<0)
+	{
+		l.hexagon=abs(c.x+c.y);		
+		l.position=3*l.hexagon-c.x;		
+	}
+	else
+	{
+		l.hexagon=max(abs(c.x),abs(c.y));
+		if (c.x== -(l.hexagon))
+			l.position=4*l.hexagon+c.y;
+		else
+			l.position=(6*l.hexagon+c.x)%l.hexagon;
+	}
+	return l;
 }
 
 void Board::split(const std::string &s, char delim, Out result) {
