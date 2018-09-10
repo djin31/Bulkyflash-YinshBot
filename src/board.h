@@ -28,7 +28,7 @@ struct coordinates
 };
 
 class Board{
-	private:
+	public:
 		vector<vector<int>> board;		// 0 -> empty, 1 -> black marker, 2 -> black ring, -1 -> white marker, -2 -> white ring
 		int board_size;			// N
 		int given_rings;		// M
@@ -42,7 +42,8 @@ class Board{
 		int black_rings_out;
 		int white_rings_out;
 		
-		int turn_id;	// -1 << white, 1 << black			
+		int turn_id;	// -1 << white, 1 << black	
+		double current_score;		
 
 		vector<coordinates> white_rings;
 		vector<coordinates> black_rings;
@@ -64,7 +65,7 @@ class Board{
 		void execute_move_move_ring(location start, location end);
 		void execute_move_remove_row_ring(location start, location end, location ring);
 
-	public:
+	//=========== use ony these functions publically===========
 		Board(int board_size, int given_rings, int rings_to_remove, int markers_in_line);
 		
 		//execute a move on the board // s has space after every character
@@ -74,10 +75,13 @@ class Board{
 		double eval_func();
 
 		//get the valid moves on the current board
-		vector<pair<Board*, string>> get_valid_moves();
+		vector<pair<double, string>> get_valid_moves();
 
 		//check if L rings have been removed
 		bool check_terminal();
+
+		//function to copy the board
+		Board* copy_board();
 };
 
 #endif

@@ -14,12 +14,13 @@ Board::Board(int board_size, int given_rings, int rings_to_remove, int markers_i
 	white_rings_out = 0;
 	
 	turn_id = -1;	// -1 << white, 1 << black
+	currentScore = 0.0;
 
 	// initialise board to all zeroes
 	std::vector<int> zeroes;
 	for(int i = 0; i < 2*board_size + 1; i++)
 		zeroes.push_back(0);
-	for (int i=1;i<=2*board_size + 1;i++)
+	for (int i=0;i<2*board_size + 1;i++)
 		board.push_back(zeroes);
 }
 
@@ -161,7 +162,7 @@ void Board::execute_move(string s){
 	turn_id *= -1;
 }
 
-vector<pair<Board*, string>> Board::get_valid_moves(){
+vector<pair<double, string>> Board::get_valid_moves(){
 
 }
 
@@ -169,6 +170,28 @@ bool Board::check_terminal(){
 	if(white_rings_out >= rings_to_remove || black_rings_out >= rings_to_remove)
 		return true;
 	return false;
+}
+
+Board* Board::copy_board(){
+	Board *newBoard = new Board(board_size, given_rings, rings_to_remove, markers_in_line);
+	newBoard->black_rings_in = this->black_rings_in;
+	newBoard->black_rings_out = this->black_rings_out;
+	newBoard->white_rings_in = this->white_rings_in;
+	newBoard->white_rings_out = this->white_rings_out;
+	newBoard->turn_id = this->turn_id;
+	newBoard->currentScore = this->currentScore;
+	for(int i = 0; i < this->white_rings.size(); i++)
+		newBoard->white_rings.push_back(this->white_rings[i]);
+	for(int i = 0; i < this->black_rings.size(); i++)
+		newBoard->black_rings.push_back(this->black_rings[i]);
+	for(int i = 0; i < 2*board_size+1; i++){
+		std::vector<int> v;
+		for(int j = 0; j < 2*board_size+1; j++){
+			v.push_back(this->board[i][j]);
+		}
+		newBoard->board.push_back(v);
+	}
+	return newBoard;
 }
 
 void Board::iterate_over_line(int value, int c, int line_no, int start, int end){	// value = -1 for flip, 0 for remove //  c = 0 for x, 1 for y //
