@@ -125,8 +125,23 @@ void Board::execute_move_remove_row_ring(location start, location end, location 
 }
 
 double Board::eval_func(){
-	double score = 0.0;
-	score += 10.0*(white_rings_out-black_rings_out) - 2.0*(white_markers-black_markers);
+	double hugeNumber = 100000;
+
+	// if terminal return large number
+	if ((turn_id==-1 && white_rings_out>=rings_to_remove)||(turn_id==1 && black_rings_out>=rings_to_remove)){
+		return hugeNumber;
+	}
+	if ((turn_id==1 && white_rings_out>=rings_to_remove)||(turn_id==-1 && black_rings_out>=rings_to_remove)){
+		return -hugeNumber;
+	}
+
+	double ring_weights = 10, marker_weights = 1;
+	double score;
+	if (turn_id==-1)
+		score = ring_weights*(1.1*white_rings_out-black_rings_out) - marker_weights*(white_markers-black_markers);
+	else
+		score = ring_weights*(white_rings_out-1.1*black_rings_out) - marker_weights*(white_markers-black_markers);
+
 	return score;
 }
 
