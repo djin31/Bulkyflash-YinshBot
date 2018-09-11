@@ -19,9 +19,9 @@ Board::Board(){
 	current_score = 0.0;
 
 	// initialise board to all zeroes
-	std::vector<int> zeroes;
-	for(int i = 0; i < 2*board_size + 1; i++)
-		zeroes.push_back(0);
+	cout<<board_size<<endl;
+	vector<int> zeroes(2*board_size+1,0);
+	
 	for (int i=0;i<2*board_size + 1;i++)
 		board.push_back(zeroes);
 }
