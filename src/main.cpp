@@ -10,6 +10,7 @@ int main()
 	//Bot bot = Bot(player_id, time_limit);
 	//bot.play();
 	Board b;
+	b.turn_id*=-1;
 	b.printBoard();
 	b.execute_move("P 0 0");
 	b.printBoard();

@@ -409,6 +409,7 @@ vector<pair<Board*, string>> Board::get_valid_moves(){		//does not give children
 			children.push_back(p);
 		}
 	}
+	return children;
 	//selecting a ring
 }
 
@@ -686,6 +687,8 @@ std::pair<Board*, string> Board::moveRing_to_pair(coordinates start, coordinates
 	newBoard->moveRing(start, end);
 	newBoard->turn_id *= -1;
 	//check for five rings in a rows
+	//cout<<"*******************";
+	//newBoard->printBoard();
 	pair<Board*, string> p=make_pair(newBoard, s);
 	return p;
 }
