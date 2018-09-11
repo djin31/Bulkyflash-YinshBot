@@ -247,6 +247,7 @@ void Board::execute_move(string s){
 		l.hexagon = std::stoi(tokens[1]);
 		l.position = std::stoi(tokens[2]);
 		execute_move_place_ring(l);
+		turn_id *= -1;
 		return;
 	}
 	if(tokens[0].compare("S") == 0 && tokens[3].compare("M") == 0){
