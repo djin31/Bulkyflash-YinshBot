@@ -2,7 +2,7 @@
 
 Board::Board(){
 
-	vector<vector<int>> board;		// 0 -> empty, 1 -> black marker, 2 -> black ring, -1 -> white marker, -2 -> white ring
+	//vector<vector<int>> board;		// 0 -> empty, 1 -> black marker, 2 -> black ring, -1 -> white marker, -2 -> white ring
 	// this->board_size = board_size;			// N
 	// this->given_rings = given_rings;		// M
 	// this->rings_to_remove = rings_to_remove;	// L
@@ -19,7 +19,6 @@ Board::Board(){
 	current_score = 0.0;
 
 	// initialise board to all zeroes
-	cout<<board_size<<endl;
 	vector<int> zeroes(2*board_size+1,0);
 	
 	for (int i=0;i<2*board_size + 1;i++)
@@ -432,11 +431,9 @@ Board* Board::copy_board(){
 	for(int i = 0; i < this->black_rings.size(); i++)
 		newBoard->black_rings.push_back(this->black_rings[i]);
 	for(int i = 0; i < 2*board_size+1; i++){
-		std::vector<int> v;
 		for(int j = 0; j < 2*board_size+1; j++){
-			v.push_back(this->board[i][j]);
+			newBoard->board[i][j] = this->board[i][j];
 		}
-		newBoard->board.push_back(v);
 	}
 	return newBoard;
 }
@@ -491,6 +488,9 @@ coordinates Board::location_to_coordinates(location l){
 	c.x = board_size;
 	c.y = board_size;
 	int h = l.hexagon, p = l.position;
+	if (h == 0){
+		return c;	
+	}
 	switch(p/h){
 		case 0 : c.x += p; c.y += p-h; break;
 		case 1 : c.x += h; c.y += p-h; break;
@@ -539,10 +539,13 @@ location Board::coordinates_to_location(coordinates c){
 
 bool Board::checkValid(coordinates c){
 	location l = coordinates_to_location(c);
+	if(l.hexagon == 0 && l.position == 0)
+		return true;
 	if (l.hexagon==board_size)
-		return (l.hexagon<board_size && l.position<6*l.hexagon && l.position%l.hexagon);
+		return (l.position<6*l.hexagon && l.position%l.hexagon);
 	else
 		return (l.hexagon<board_size && l.position<6*l.hexagon);
+	return false;
 }
 
 vector<pair<coordinates, coordinates>> Board::get_markers_in_a_row(){
@@ -683,6 +686,6 @@ std::pair<Board*, string> Board::moveRing_to_pair(coordinates start, coordinates
 	newBoard->moveRing(start, end);
 	newBoard->turn_id *= -1;
 	//check for five rings in a rows
-	pair<Board*, string> p(newBoard, s);
+	pair<Board*, string> p=make_pair(newBoard, s);
 	return p;
 }
