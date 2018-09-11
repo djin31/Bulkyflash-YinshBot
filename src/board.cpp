@@ -262,6 +262,8 @@ vector<pair<Board*, string>> Board::get_valid_moves(){		//does not give children
 	std::vector<pair<Board*, string>> children;
 	string s = "";
 	coordinates initial;
+	coordinates final;
+	bool flag = true;	
 	location inital_location;
 	int rings_in;
 	if(turn_id == -1)
@@ -274,10 +276,9 @@ vector<pair<Board*, string>> Board::get_valid_moves(){		//does not give children
 		else
 			initial = black_rings[i];
 
+		
 		//moving up
-		coordinates final;
 		final.x = initial.x; final.y = initial.y-1;
-		bool flag = true;
 		while (checkValid(final) && board[final.x][final.y]==0)
 		{	
 			pair<Board*, string> p = moveRing_to_pair(initial, final);
@@ -295,9 +296,8 @@ vector<pair<Board*, string>> Board::get_valid_moves(){		//does not give children
 			children.push_back(p);
 		}
 		//moving down
-		coordinates final;
 		final.x = initial.x; final.y = initial.y+1;
-		bool flag = true;
+		flag = true;
 		while (checkValid(final) && board[final.x][final.y]==0)
 		{	
 			pair<Board*, string> p = moveRing_to_pair(initial, final);
@@ -315,9 +315,8 @@ vector<pair<Board*, string>> Board::get_valid_moves(){		//does not give children
 			children.push_back(p);
 		}
 		//moving along increasing x
-		coordinates final;
 		final.x = initial.x + 1; final.y = initial.y;
-		bool flag = true;
+		flag = true;
 		while (checkValid(final) && board[final.x][final.y]==0)
 		{	
 			pair<Board*, string> p = moveRing_to_pair(initial, final);
@@ -335,9 +334,8 @@ vector<pair<Board*, string>> Board::get_valid_moves(){		//does not give children
 			children.push_back(p);
 		}
 		//moving along decreasing x
-		coordinates final;
 		final.x = initial.x-1; final.y = initial.y;
-		bool flag = true;
+		flag = true;
 		while (checkValid(final) && board[final.x][final.y]==0)
 		{	
 			pair<Board*, string> p = moveRing_to_pair(initial, final);
@@ -355,9 +353,8 @@ vector<pair<Board*, string>> Board::get_valid_moves(){		//does not give children
 			children.push_back(p);
 		}
 		//moving along increasing z
-		coordinates final;
 		final.x = initial.x+1; final.y = initial.y+1;
-		bool  flag = true;
+		flag = true;
 		while (checkValid(final) && board[final.x][final.y]==0)
 		{	
 			pair<Board*, string> p = moveRing_to_pair(initial, final);
@@ -377,9 +374,8 @@ vector<pair<Board*, string>> Board::get_valid_moves(){		//does not give children
 			children.push_back(p);
 		}
 		//moving along decreasing z
-		coordinates final;
 		final.x = initial.x-1; final.y = initial.y-1;
-		bool flag = true;
+		flag = true;
 		while (checkValid(final) && board[final.x][final.y]==0)
 		{	
 			pair<Board*, string> p = moveRing_to_pair(initial, final);
