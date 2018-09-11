@@ -539,7 +539,10 @@ location Board::coordinates_to_location(coordinates c){
 
 bool Board::checkValid(coordinates c){
 	location l = coordinates_to_location(c);
-	return (l.hexagon<board_size && l.position<6*l.hexagon);
+	if (l.hexagon==board_size)
+		return (l.hexagon<board_size && l.position<6*l.hexagon && l.position%l.hexagon);
+	else
+		return (l.hexagon<board_size && l.position<6*l.hexagon);
 }
 
 vector<pair<coordinates, coordinates>> Board::get_markers_in_a_row(){

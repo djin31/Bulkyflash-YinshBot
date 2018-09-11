@@ -91,6 +91,7 @@ void Bot::place_ring(){
 		l.hexagon=rand()%6;
 		l.position=rand()%(6*l.hexagon);
 		c=root->board->location_to_coordinates(l);
+		cout<< c.x<<" "<<c.y<<endl;
 		while (root->board->board[c.x][c.y]!=0)
 		{
 			l.hexagon=rand()%6;
