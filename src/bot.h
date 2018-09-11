@@ -2,7 +2,6 @@
 #define BOT_H
 
 #include "treenode.h"
-#include "board.h"
 #include <cstdlib>
 #include <time.h> 
 
