@@ -89,6 +89,7 @@ void Bot::place_ring(){
 	location l;
 	coordinates c;
 	while(rings_placed<rings_to_be_placed){
+		rings_placed++;
 		l.hexagon=rand()%6;
 		if (l.hexagon==0)
 			l.position=0;
@@ -107,12 +108,12 @@ void Bot::place_ring(){
 		}
 		move = "P " + to_string(l.hexagon) + " " + to_string(l.position);
 		root->board->execute_move(move);
-		cout<<move;
+		cout<<move<<endl;
 		// root->board->printBoard();
 
 		getline(cin,move);
 		root->board->execute_move(move);
-		// root->board->printBoard();
+		root->board->printBoard();
 	}
 }
 
@@ -125,12 +126,12 @@ void Bot::play(){
 		{
 			minVal(root,INT_MIN, INT_MAX, MAX_DEPTH);
 			root = root->children.front();
-			cout<<root->move_description;
+			cout<<root->move_description<<endl;
 		}
 		else{
 			maxVal(root,INT_MIN, INT_MAX, MAX_DEPTH);
 			root = root->children.back();
-			cout<<root->move_description;
+			cout<<root->move_description<<endl;
 		}
 		read_move();
 	}
