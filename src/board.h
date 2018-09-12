@@ -62,7 +62,6 @@ class Board{
 		void execute_move_place_ring(location l);
 		void execute_move_move_ring(location start, location end);
 		void execute_move_remove_row_ring(location start, location end, location ring);
-
 		vector<pair<coordinates, coordinates>> get_markers_in_a_row();
 		bool checkValid(coordinates c);
 	//=========== use ony these functions publically===========
