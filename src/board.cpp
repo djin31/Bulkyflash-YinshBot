@@ -142,8 +142,13 @@ bool Board::removeMarkerSeq(coordinates start, coordinates end){
 			}
 		}
 		else{
-			for(int i=  0; i <= start.x - end.x; i++)
+			for(int i=  0; i <= start.x - end.x; i++){
+				if(board[end.x + i][end.y + i] == 1)
+					black_markers--;
+				else if(board[end.x + i][end.y + i] == -1)
+					white_markers--;
 				board[end.x + i][end.y + i] = 0;	
+			}
 		}
 		return true;	
 	}
@@ -577,38 +582,45 @@ vector<pair<coordinates, coordinates>> Board::get_markers_in_a_row(){
 	coordinates start_coord,end_coord;
 	location start,end;
 	for (int i=0;i<2*board_size+1;i++){
-		for (int j=0;i<2*board_size+1;j++){
+		for (int j=0;j<2*board_size+1;j++){
 			start_coord.x=i;
 			start_coord.y=j;
 			if (!(checkValid(start_coord) && board[i][j]==turn_id))
 				continue;
 			
 			//moving down
+			cerr<<"check down"<<endl;
 			int counter=1,k=j+1,l;
 			end_coord.x=i;
 			end_coord.y=j-1;
 			if (!checkValid(end_coord) || board[i][j-1]!=turn_id){
 				end_coord.y=k;
-				while(checkValid(end_coord) && board[i][k]==turn_id)
+				while(checkValid(end_coord))
 				{
+					if (board[i][k]!=turn_id)
+						break;
 					counter++;
 					end_coord.y=k++;
 					if (counter==markers_in_line)
 						break;
 				}
 			}
+			
 			if (counter==markers_in_line)
 				retVal.push_back(make_pair(start_coord,end_coord));
 
 			// moving up
+			cerr<<"check up"<<endl;
 			counter=1;
 			k=j-1;
 			end_coord.x=i;
 			end_coord.y=j+1;
 			if (!checkValid(end_coord) || board[i][j-1]!=turn_id){
 				end_coord.y=k;
-				while(checkValid(end_coord) && board[i][k]==turn_id)
+				while(checkValid(end_coord))
 				{
+					if (board[i][k]!=turn_id)
+						break;
 					counter++;
 					end_coord.y=k--;
 					if (counter==markers_in_line)
@@ -619,14 +631,17 @@ vector<pair<coordinates, coordinates>> Board::get_markers_in_a_row(){
 				retVal.push_back(make_pair(start_coord,end_coord));
 
 			// moving right sideways
+			cerr<<"check right"<<endl;
 			counter=1;
 			k=i+1;
 			end_coord.x=i-1;
 			end_coord.y=j;
 			if (!checkValid(end_coord) || board[i-1][j]!=turn_id){
 				end_coord.x=k;
-				while(checkValid(end_coord) && board[k][j]==turn_id)
+				while(checkValid(end_coord))
 				{
+					if (board[k][j]!=turn_id)
+						break;
 					counter++;
 					end_coord.x=k++;
 					if (counter==markers_in_line)
@@ -637,14 +652,17 @@ vector<pair<coordinates, coordinates>> Board::get_markers_in_a_row(){
 				retVal.push_back(make_pair(start_coord,end_coord));
 			
 			// moving left sideways
+			cerr<<"check left"<<endl;
 			counter=1;
 			k=i-1;
 			end_coord.x=i+1;
 			end_coord.y=j;
 			if (!checkValid(end_coord) || board[i+1][j]!=turn_id){
 				end_coord.x=k;
-				while(checkValid(end_coord) && board[k][j]==turn_id)
+				while(checkValid(end_coord))
 				{
+					if (board[k][j]!=turn_id)
+						break;
 					counter++;
 					end_coord.x=k--;
 					if (counter==markers_in_line)
@@ -655,6 +673,7 @@ vector<pair<coordinates, coordinates>> Board::get_markers_in_a_row(){
 				retVal.push_back(make_pair(start_coord,end_coord));
 			
 			// moving diagonal right down
+			cerr<<"check diagonal right"<<endl;
 			counter=1;
 			k=i+1;
 			l=j+1;
@@ -663,8 +682,11 @@ vector<pair<coordinates, coordinates>> Board::get_markers_in_a_row(){
 			if (!checkValid(end_coord) || board[i-1][j-1]!=turn_id){
 				end_coord.x=k;
 				end_coord.y=l;
-				while(checkValid(end_coord) && board[k][l]==turn_id)
+				cerr<<k<<" "<<l<<endl;
+				while(checkValid(end_coord))
 				{
+					if (board[k][l]!=turn_id)
+						break;
 					counter++;
 					end_coord.x=k++;
 					end_coord.y=l++;
@@ -676,6 +698,8 @@ vector<pair<coordinates, coordinates>> Board::get_markers_in_a_row(){
 				retVal.push_back(make_pair(start_coord,end_coord));
 			
 			// moving diagonal right down
+			cerr<<"check diagonal leftt"<<endl;
+			
 			counter=1;
 			k=i-1;
 			l=j-1;
@@ -684,8 +708,10 @@ vector<pair<coordinates, coordinates>> Board::get_markers_in_a_row(){
 			if (!checkValid(end_coord) || board[i+1][j+1]!=turn_id){
 				end_coord.x=k;
 				end_coord.y=l;
-				while(checkValid(end_coord) && board[k][l]==turn_id)
+				while(checkValid(end_coord))
 				{
+					if (board[k][l]!=turn_id)
+						break;
 					counter++;
 					end_coord.x=k--;
 					end_coord.y=l--;
