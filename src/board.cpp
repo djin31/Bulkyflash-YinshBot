@@ -556,7 +556,7 @@ location Board::coordinates_to_location(coordinates c){
 		if (c.x== -(l.hexagon))
 			l.position=4*l.hexagon+c.y;
 		else
-			l.position=(6*l.hexagon+c.x)%l.hexagon;
+			l.position=(6*l.hexagon+c.x)%(6*l.hexagon);
 	}
 	return l;
 }

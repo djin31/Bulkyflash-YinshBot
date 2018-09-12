@@ -1,6 +1,6 @@
 #include "bot.h"
 
-int MAX_DEPTH=4;
+int MAX_DEPTH=2;
 
 Bot::Bot(int player_id, double time_limit){
 	root = new Treenode();
@@ -18,6 +18,10 @@ bool node_compare(Treenode* a, Treenode* b)
 {
 	return (a->value < b->value);
 }
+bool rev_node_compare(Treenode* a, Treenode* b)
+{
+	return (a->value > b->value);
+}
 
 void Bot::minVal(Treenode* node, double alpha, double beta, int depth_left){
 	if (depth_left==0||node->board->check_terminal())
@@ -28,6 +32,7 @@ void Bot::minVal(Treenode* node, double alpha, double beta, int depth_left){
 	if (node->children.size()==0)
 	{
 		node->generate_children();
+		cerr<<"MINVAL GENERATED CHILDREN "<<node->children.size()<<endl;
 	}
 	for (Treenode* child: node->children)
 	{
@@ -61,8 +66,8 @@ void Bot::maxVal(Treenode* node, double alpha, double beta, int depth_left){
 			node->value = child->value;
 		}
 	}
-	sort(node->children.begin(),node->children.end(), node_compare);
-	node->value = node->children.back()->value;
+	sort(node->children.begin(),node->children.end(), rev_node_compare);
+	node->value = node->children.front()->value;
 }
 
 void Bot::read_move(){
@@ -78,6 +83,7 @@ void Bot::read_move(){
 	// should generate the new config and remake tree
 	root->board->execute_move(move);
 	root->children.clear();
+	root->generate_children();
 	
 }
 
@@ -130,11 +136,13 @@ void Bot::play(){
 		{
 			minVal(root,INT_MIN, INT_MAX, MAX_DEPTH);
 			root = root->children.front();
+			for (int i=0;i<5;i++)
+				cerr<<i<<" ring "<<root->board->black_rings[i].x<<" "<<root->board->black_rings[i].y<<endl;
 			cout<<root->move_description<<endl;
 		}
 		else{
 			maxVal(root,INT_MIN, INT_MAX, MAX_DEPTH);
-			root = root->children.back();
+			root = root->children.front();
 			cout<<root->move_description<<endl;
 		}
 		read_move();
