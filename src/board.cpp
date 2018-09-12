@@ -78,14 +78,14 @@ bool Board::moveRing(coordinates start, coordinates end){
 		}
 		else{
 			for(int i=  1; i < start.x - end.x; i++){
-				if(board[start.x + i][start.y + i] == 1)
+				if(board[end.x + i][end.y + i] == 1)
 					black_markers--;
-				else if(board[start.x + i][start.y + i] == -1)
+				else if(board[end.x + i][end.y + i] == -1)
 					white_markers--;
 				board[end.x + i][end.y + i] *= -1;	
-				if(board[start.x + i][start.y + i] == 1)
+				if(board[end.x + i][end.y + i] == 1)
 					black_markers++;
-				else if(board[start.x + i][start.y + i] == -1)
+				else if(board[end.x + i][end.y + i] == -1)
 					white_markers++;
 			}
 		}
