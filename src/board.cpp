@@ -44,8 +44,28 @@ bool Board::moveRing(coordinates start, coordinates end){
 	int ring_no = board[start.x][start.y];
 	board[start.x][start.y] = ring_no/2;
 	board[end.x][end.y] = ring_no;
-	removeRing(start);
-	placeRing(ring_no,end);
+	
+	//changing ring vectors
+	if(ring_no == 2){
+		for(int i = 0; i < black_rings.size(); i++){
+			if(black_rings[i].x == start.x && black_rings[i].y == start.y){
+				black_rings[i].x = end.x;
+				black_rings[i].y = end.y;
+				break;
+			}
+		}
+	}
+	else{
+		for(int i = 0; i < white_rings.size(); i++){
+			if(white_rings[i].x == start.x && white_rings[i].y == start.y){
+				white_rings[i].x = end.x;
+				white_rings[i].y = end.y;
+				break;
+			}
+		}
+	}
+
+
 	if(ring_no == 2)
 		black_markers++;
 	else
