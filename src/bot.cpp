@@ -68,7 +68,7 @@ void Bot::read_move(){
 			root = child;return;
 		}
 	}
-	cout<<"OPPONENT'S MOVE NOT FOUND AMONGST CHILDREN\n";
+	cerr<<"OPPONENT'S MOVE NOT FOUND AMONGST CHILDREN\n";
 	// should generate the new config and remake tree
 	root->board->execute_move(move);
 	root->children = vector<Treenode*>();
@@ -82,26 +82,38 @@ void Bot::place_ring(){
 	{
 		getline(cin,move);
 		root->board->execute_move(move);
+		cerr<<"Received first move\n";
 	}
 	int rings_placed=0;
 	int rings_to_be_placed=5;
 	location l;
 	coordinates c;
 	while(rings_placed<rings_to_be_placed){
+		rings_placed++;
 		l.hexagon=rand()%6;
-		l.position=rand()%(6*l.hexagon);
+		if (l.hexagon==0)
+			l.position=0;
+		else
+			l.position=rand()%(6*l.hexagon);
 		c=root->board->location_to_coordinates(l);
-		cout<< c.x<<" "<<c.y<<endl;
+		cerr<< c.x<<" "<<c.y<<endl;
 		while (root->board->board[c.x][c.y]!=0)
 		{
 			l.hexagon=rand()%6;
-			l.position=rand()%(6*l.hexagon);
+			if (l.hexagon==0)
+				l.position=0;
+			else
+				l.position=rand()%(6*l.hexagon);
 			c=root->board->location_to_coordinates(l);
 		}
 		move = "P " + to_string(l.hexagon) + " " + to_string(l.position);
 		root->board->execute_move(move);
-		
-		read_move();
+		cout<<move<<endl;
+		// root->board->printBoard();
+
+		getline(cin,move);
+		root->board->execute_move(move);
+		root->board->printBoard();
 	}
 }
 
