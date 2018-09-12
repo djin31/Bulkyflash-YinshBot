@@ -745,6 +745,16 @@ std::pair<Board*, string> Board::moveRing_to_pair(coordinates start, coordinates
 		newBoard->removeMarkerSeq(start, end);
 		s += "RS " + to_string(initial.hexagon) + " " + to_string(initial.position) + " ";
 		s += "RE " + to_string(final.hexagon) + " " + to_string(final.position) + " ";
+		coordinates ring;
+		if(turn_id == -1){
+			ring = black_rings[0];
+		}
+		else{
+			ring = white_rings[0];
+		}
+		removeRing(ring);
+		location ring_l = coordinates_to_location(ring);
+		s += "X " + to_string(ring_l.hexagon) + " " + to_string(ring_l.position) + " ";
 	}
 	//cout<<"*******************";
 	//newBoard->printBoard();
