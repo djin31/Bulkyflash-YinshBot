@@ -21,7 +21,10 @@ bool node_compare(Treenode* a, Treenode* b)
 
 void Bot::minVal(Treenode* node, double alpha, double beta, int depth_left){
 	if (depth_left==0||node->board->check_terminal())
+	{
 		node->value = node->board->eval_func();
+		return;
+	}
 	if (node->children.size()==0)
 	{
 		node->generate_children();
@@ -41,7 +44,10 @@ void Bot::minVal(Treenode* node, double alpha, double beta, int depth_left){
 
 void Bot::maxVal(Treenode* node, double alpha, double beta, int depth_left){
 	if (depth_left==0||node->board->check_terminal())
+	{
 		node->value = node->board->eval_func();
+		return;
+	}
 	if (node->children.size()==0)
 	{
 		node->generate_children();
@@ -60,18 +66,18 @@ void Bot::maxVal(Treenode* node, double alpha, double beta, int depth_left){
 }
 
 void Bot::read_move(){
-	string move;
+	string move, spaced_move;
 	getline(cin,move);
-		
+	spaced_move = move + " ";	
 	for (Treenode* child: root->children){
-		if (child->move_description==move){
+		if (child->move_description==move||child->move_description==spaced_move){
 			root = child;return;
 		}
 	}
 	cerr<<"OPPONENT'S MOVE NOT FOUND AMONGST CHILDREN\n";
 	// should generate the new config and remake tree
 	root->board->execute_move(move);
-	root->children = vector<Treenode*>();
+	root->children.clear();
 	
 }
 
@@ -96,7 +102,6 @@ void Bot::place_ring(){
 		else
 			l.position=rand()%(6*l.hexagon);
 		c=root->board->location_to_coordinates(l);
-		cerr<< c.x<<" "<<c.y<<endl;
 		while (root->board->board[c.x][c.y]!=0)
 		{
 			l.hexagon=rand()%6;
@@ -113,7 +118,6 @@ void Bot::place_ring(){
 
 		getline(cin,move);
 		root->board->execute_move(move);
-		root->board->printBoard();
 	}
 }
 
@@ -135,4 +139,5 @@ void Bot::play(){
 		}
 		read_move();
 	}
+	
 }

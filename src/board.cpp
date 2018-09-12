@@ -44,6 +44,8 @@ bool Board::moveRing(coordinates start, coordinates end){
 	int ring_no = board[start.x][start.y];
 	board[start.x][start.y] = ring_no/2;
 	board[end.x][end.y] = ring_no;
+	removeRing(start);
+	placeRing(ring_no,end);
 	if(ring_no == 2)
 		black_markers++;
 	else
