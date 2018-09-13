@@ -42,7 +42,6 @@ class Board{
 		int white_rings_out;
 		
 		int turn_id;	// -1 << white, 1 << black	
-		double current_score;		
 
 		vector<coordinates> white_rings;
 		vector<coordinates> black_rings;

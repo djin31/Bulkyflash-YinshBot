@@ -136,15 +136,21 @@ void Bot::play(){
 		if (player_id==1)
 		{
 			minVal(root,INT_MIN, INT_MAX, MAX_DEPTH);
-			root = root->children.front();
-			
-			//root->board->printBoard();
-			cout<<root->move_description<<endl;
+			if (root->children.size()>0){
+				root = root->children.front();
+				cout<<root->move_description<<endl;
+			}
+			else
+				cerr<<"NO CHILDREN FOUND\n";
 		}
 		else{
 			maxVal(root,INT_MIN, INT_MAX, MAX_DEPTH);
-			root = root->children.front();
-			cout<<root->move_description<<endl;
+			if (root->children.size()>0){
+				root = root->children.front();
+				cout<<root->move_description<<endl;
+			}
+			else
+				cerr<<"NO CHILDREN FOUND\n";
 		}
 		read_move();
 		//root->board->printBoard();
