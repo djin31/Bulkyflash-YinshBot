@@ -107,8 +107,9 @@ void Bot::place_ring(){
 			l.position=0;
 		else
 			l.position=rand()%(6*l.hexagon);
+		
 		c=root->board->location_to_coordinates(l);
-		while (root->board->board[c.x][c.y]!=0)
+		while (!(root->board->checkValid(c) && root->board->board[c.x][c.y]==0))
 		{
 			l.hexagon=rand()%6;
 			if (l.hexagon==0)
