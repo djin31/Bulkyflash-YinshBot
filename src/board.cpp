@@ -469,7 +469,7 @@ Board* Board::copy_board(){
 
 void Board::printBoard(){
 	for(int i = 0; i < 2*board_size+1; i++){
-		for(int j = 0; j < 2*board_size+1; j++){
+		for(int j = 2*board_size; j >=0 ; j--){
 			coordinates c;
 			c.x = i;
 			c.y = j;
@@ -583,6 +583,7 @@ vector<pair<coordinates, coordinates>> Board::get_markers_in_a_row(){
 	location start,end;
 	for (int i=0;i<2*board_size+1;i++){
 		for (int j=0;j<2*board_size+1;j++){
+			// cerr<<"CHECKING COORDINATES "<<i<<" "<<j<<endl;
 			start_coord.x=i;
 			start_coord.y=j;
 			if (!(checkValid(start_coord) && board[i][j]==turn_id))
@@ -595,13 +596,15 @@ vector<pair<coordinates, coordinates>> Board::get_markers_in_a_row(){
 			end_coord.y=j-1;
 			if (!checkValid(end_coord) || board[i][j-1]!=turn_id){
 				end_coord.y=k;
+				cerr<<i<<" "<<k<<endl;
+
 				while(checkValid(end_coord))
 				{
 					if (board[i][k]!=turn_id)
 						break;
 					counter++;
-					end_coord.y=k++;
-					if (counter==markers_in_line)
+					end_coord.y=++k;
+					if (counter>=markers_in_line)
 						break;
 				}
 			}
@@ -617,13 +620,15 @@ vector<pair<coordinates, coordinates>> Board::get_markers_in_a_row(){
 			end_coord.y=j+1;
 			if (!checkValid(end_coord) || board[i][j-1]!=turn_id){
 				end_coord.y=k;
+				cerr<<i<<" "<<k<<endl;
+
 				while(checkValid(end_coord))
 				{
 					if (board[i][k]!=turn_id)
 						break;
 					counter++;
-					end_coord.y=k--;
-					if (counter==markers_in_line)
+					end_coord.y=--k;
+					if (counter>=markers_in_line)
 						break;
 				}
 			}
@@ -638,13 +643,15 @@ vector<pair<coordinates, coordinates>> Board::get_markers_in_a_row(){
 			end_coord.y=j;
 			if (!checkValid(end_coord) || board[i-1][j]!=turn_id){
 				end_coord.x=k;
+				cerr<<k<<" "<<j<<endl;
+
 				while(checkValid(end_coord))
 				{
 					if (board[k][j]!=turn_id)
 						break;
 					counter++;
-					end_coord.x=k++;
-					if (counter==markers_in_line)
+					end_coord.x=++k;
+					if (counter>=markers_in_line)
 						break;
 				}
 			}
@@ -657,15 +664,18 @@ vector<pair<coordinates, coordinates>> Board::get_markers_in_a_row(){
 			k=i-1;
 			end_coord.x=i+1;
 			end_coord.y=j;
+			
 			if (!checkValid(end_coord) || board[i+1][j]!=turn_id){
 				end_coord.x=k;
+				cerr<<k<<" "<<j<<endl;
+
 				while(checkValid(end_coord))
 				{
 					if (board[k][j]!=turn_id)
 						break;
 					counter++;
-					end_coord.x=k--;
-					if (counter==markers_in_line)
+					end_coord.x=--k;
+					if (counter>=markers_in_line)
 						break;
 				}
 			}
@@ -688,9 +698,9 @@ vector<pair<coordinates, coordinates>> Board::get_markers_in_a_row(){
 					if (board[k][l]!=turn_id)
 						break;
 					counter++;
-					end_coord.x=k++;
-					end_coord.y=l++;
-					if (counter==markers_in_line)
+					end_coord.x=++k;
+					end_coord.y=++l;
+					if (counter>=markers_in_line)
 						break;
 				}
 			}
@@ -708,14 +718,16 @@ vector<pair<coordinates, coordinates>> Board::get_markers_in_a_row(){
 			if (!checkValid(end_coord) || board[i+1][j+1]!=turn_id){
 				end_coord.x=k;
 				end_coord.y=l;
+				cerr<<k<<" "<<l<<endl;
+
 				while(checkValid(end_coord))
 				{
 					if (board[k][l]!=turn_id)
 						break;
 					counter++;
-					end_coord.x=k--;
-					end_coord.y=l--;
-					if (counter==markers_in_line)
+					end_coord.x=--k;
+					end_coord.y=--l;
+					if (counter>=markers_in_line)
 						break;
 				}
 			}
@@ -734,10 +746,11 @@ std::pair<Board*, string> Board::moveRing_to_pair(coordinates start, coordinates
 	s += "M " + to_string(newLocation.hexagon) + " " + to_string(newLocation.position) + " ";
 	Board* newBoard = this->copy_board();
 	newBoard->moveRing(start, end);
-	newBoard->turn_id *= -1;
+
 	//check for five rings in a rows
-	vector<pair<coordinates, coordinates>> v = get_markers_in_a_row();
+	vector<pair<coordinates, coordinates>> v = newBoard->get_markers_in_a_row();
 	if(v.size() > 0){
+		cerr<<"MARKERS IN ROW SIZE"<<v.size();
 		coordinates start = v[0].first;
 		coordinates end = v[0].second;
 		location initial = coordinates_to_location(start);
@@ -746,16 +759,19 @@ std::pair<Board*, string> Board::moveRing_to_pair(coordinates start, coordinates
 		s += "RS " + to_string(initial.hexagon) + " " + to_string(initial.position) + " ";
 		s += "RE " + to_string(final.hexagon) + " " + to_string(final.position) + " ";
 		coordinates ring;
-		if(turn_id == -1){
+		if(turn_id == 1){
 			ring = black_rings[0];
 		}
 		else{
 			ring = white_rings[0];
 		}
-		removeRing(ring);
+		newBoard->removeRing(ring);
 		location ring_l = coordinates_to_location(ring);
 		s += "X " + to_string(ring_l.hexagon) + " " + to_string(ring_l.position) + " ";
 	}
+
+	newBoard->turn_id *= -1;
+
 	//cout<<"*******************";
 	//newBoard->printBoard();
 	pair<Board*, string> p=make_pair(newBoard, s);

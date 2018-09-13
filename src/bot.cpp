@@ -136,8 +136,8 @@ void Bot::play(){
 		{
 			minVal(root,INT_MIN, INT_MAX, MAX_DEPTH);
 			root = root->children.front();
-			for (int i=0;i<5;i++)
-				cerr<<i<<" ring "<<root->board->black_rings[i].x<<" "<<root->board->black_rings[i].y<<endl;
+			
+			//root->board->printBoard();
 			cout<<root->move_description<<endl;
 		}
 		else{
@@ -146,6 +146,8 @@ void Bot::play(){
 			cout<<root->move_description<<endl;
 		}
 		read_move();
+		//root->board->printBoard();
+
 	}
 	
 }
