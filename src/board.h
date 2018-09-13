@@ -51,7 +51,7 @@ class Board{
 		void iterate_over_line(int value, int c, int line_no, int start, int end);	// value = -1 for flip, 0 for remove //  c = 0 for iterating over x, 1 for y // iteration only along x or y
 		coordinates location_to_coordinates(location l);
 		location coordinates_to_location(coordinates c);
-		std::pair<Board*, string> moveRing_to_pair(coordinates start, coordinates end);
+		std::pair<Board*, string> moveRing_to_pair(Board *b, coordinates start, coordinates end, string removeMarker_string);
 
 		// ring_no : black ring << 2, white ring << -2
 		// These function do not check the validity of the move, they can only tell if the location is outside the board
@@ -63,6 +63,8 @@ class Board{
 		void execute_move_move_ring(location start, location end);
 		void execute_move_remove_row_ring(location start, location end, location ring);
 		vector<pair<coordinates, coordinates>> get_markers_in_a_row();
+		vector<pair<Board*, string>> possible_removeMarker_orders(Board* b);
+		vector<pair<Board*, string>> possible_moveRing_orders(Board* b, string removeMarker_string);
 		bool checkValid(coordinates c);
 	//=========== use ony these functions publically===========
 		Board();
