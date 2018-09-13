@@ -202,13 +202,23 @@ double Board::eval_func(){
 		return -hugeNumber;
 	}
 
-	double ring_weights = 10, marker_weights = 1;
+	double ring_weights = 10, marker_weights = 1, blocking_weight=1;
 	double score;
-	if (turn_id==-1)
-		score = ring_weights*(1.1*white_rings_out-black_rings_out) - marker_weights*(white_markers-black_markers);
-	else
-		score = ring_weights*(white_rings_out-1.1*black_rings_out) - marker_weights*(white_markers-black_markers);
 
+	int rings_blocked_by_white = 0, rings_blocked_by_black=0;
+	for (coordinates c: white_rings)
+		rings_blocked_by_white+=blocked_rings(c);
+	
+	for (coordinates c: black_rings)
+		rings_blocked_by_black+=blocked_rings(c);
+
+	
+	score = ring_weights*(white_rings_out-black_rings_out) + marker_weights*(white_markers-black_markers) + blocking_weight*(rings_blocked_by_white-rings_blocked_by_black);
+	
+	if (turn_id==-1)
+		score+=ring_weights*white_rings_out;
+	else
+		score-=ring_weights*black_rings_out;
 	return score;
 }
 
@@ -225,6 +235,8 @@ int Board::blocked_rings(coordinates c){
 		it.y--;
 	if (checkValid(it) && board[it.x][it.y]!=0)
 		retVal-=ring_id/board[it.x][it.y];
+	if (!checkValid(it))
+		retVal-=1;
 	
 	//moving down
 	it.x=c.x;
@@ -233,7 +245,9 @@ int Board::blocked_rings(coordinates c){
 		it.y++;
 	if (checkValid(it) && board[it.x][it.y]!=0)
 		retVal-=ring_id/board[it.x][it.y];
-	
+	if (!checkValid(it))
+		retVal-=1;
+
 	//moving right
 	it.x=c.x+1;
 	it.y=c.y;
@@ -241,7 +255,9 @@ int Board::blocked_rings(coordinates c){
 		it.x++;
 	if (checkValid(it) && board[it.x][it.y]!=0)
 		retVal-=ring_id/board[it.x][it.y];
-	
+	if (!checkValid(it))
+		retVal-=1;
+
 	//moving left
 	it.x=c.x-1;
 	it.y=c.y;
@@ -249,7 +265,9 @@ int Board::blocked_rings(coordinates c){
 		it.x--;
 	if (checkValid(it) && board[it.x][it.y]!=0)
 		retVal-=ring_id/board[it.x][it.y];
-	
+	if (!checkValid(it))
+		retVal-=1;
+
 	// moving right down
 	it.x=c.x+1;
 	it.y=c.y+1;
@@ -259,7 +277,9 @@ int Board::blocked_rings(coordinates c){
 	}
 	if (checkValid(it) && board[it.x][it.y]!=0)
 		retVal-=ring_id/board[it.x][it.y];
-	
+	if (!checkValid(it))
+		retVal-=1;
+
 	// moving left up
 	it.x=c.x-1;
 	it.y=c.y-1;
@@ -269,6 +289,9 @@ int Board::blocked_rings(coordinates c){
 	}
 	if (checkValid(it) && board[it.x][it.y]!=0)
 		retVal-=ring_id/board[it.x][it.y];
+	if (!checkValid(it))
+		retVal-=1;
+	return retVal;
 }
 
 void Board::execute_move(string s){
@@ -638,9 +661,10 @@ vector<pair<coordinates, coordinates>> Board::get_markers_in_a_row(){
 					if (board[i][k]!=turn_id)
 						break;
 					counter++;
-					end_coord.y=++k;
 					if (counter>=markers_in_line)
 						break;
+					end_coord.y=++k;
+					
 				}
 			}
 			
@@ -662,9 +686,10 @@ vector<pair<coordinates, coordinates>> Board::get_markers_in_a_row(){
 					if (board[i][k]!=turn_id)
 						break;
 					counter++;
-					end_coord.y=--k;
 					if (counter>=markers_in_line)
 						break;
+					end_coord.y=--k;
+					
 				}
 			}
 			if (counter==markers_in_line)
@@ -685,9 +710,10 @@ vector<pair<coordinates, coordinates>> Board::get_markers_in_a_row(){
 					if (board[k][j]!=turn_id)
 						break;
 					counter++;
-					end_coord.x=++k;
 					if (counter>=markers_in_line)
 						break;
+					end_coord.x=++k;
+					
 				}
 			}
 			if (counter==markers_in_line)			
@@ -709,9 +735,10 @@ vector<pair<coordinates, coordinates>> Board::get_markers_in_a_row(){
 					if (board[k][j]!=turn_id)
 						break;
 					counter++;
-					end_coord.x=--k;
 					if (counter>=markers_in_line)
 						break;
+					end_coord.x=--k;
+					
 				}
 			}
 			if (counter==markers_in_line)			
@@ -733,10 +760,11 @@ vector<pair<coordinates, coordinates>> Board::get_markers_in_a_row(){
 					if (board[k][l]!=turn_id)
 						break;
 					counter++;
-					end_coord.x=++k;
-					end_coord.y=++l;
 					if (counter>=markers_in_line)
 						break;
+					end_coord.x=++k;
+					end_coord.y=++l;
+					
 				}
 			}
 			if (counter==markers_in_line)			
@@ -760,10 +788,11 @@ vector<pair<coordinates, coordinates>> Board::get_markers_in_a_row(){
 					if (board[k][l]!=turn_id)
 						break;
 					counter++;
-					end_coord.x=--k;
-					end_coord.y=--l;
 					if (counter>=markers_in_line)
 						break;
+					end_coord.x=--k;
+					end_coord.y=--l;
+					
 				}
 			}
 			if (counter==markers_in_line)			
