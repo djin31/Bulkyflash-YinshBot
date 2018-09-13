@@ -295,34 +295,38 @@ int Board::blocked_rings(coordinates c){
 
 void Board::execute_move(string s){
 	std::vector<std::string> tokens = split(s, ' ');
-	if(tokens[0].compare("P") == 0){
-		location l;
-		l.hexagon = std::stoi(tokens[1]);
-		l.position = std::stoi(tokens[2]);
-		execute_move_place_ring(l);
-		turn_id *= -1;
-		return;
-	}
-	if(tokens[0].compare("S") == 0 && tokens[3].compare("M") == 0){
-		location start,end;
-		start.hexagon = std::stoi(tokens[1]);
-		start.position = std::stoi(tokens[2]);
-		end.hexagon = std::stoi(tokens[4]);
-		end.position = std::stoi(tokens[5]);
-		execute_move_move_ring(start, end);
-		if(tokens.size() > 6){
-			if(tokens[7].compare("RS") == 0 && tokens[10].compare("RE") == 0 && tokens[13].compare("X") == 0){
-				location start,end,ring;
-				start.hexagon = std::stoi(tokens[8]);
-				start.position = std::stoi(tokens[9]);
-				end.hexagon = std::stoi(tokens[11]);
-				end.position = std::stoi(tokens[12]);
-				ring.hexagon = std::stoi(tokens[14]);
-				ring.position = std::stoi(tokens[15]);
-				execute_move_remove_row_ring(start, end, ring);
-			}
+	int i = 0;
+	while(i < tokens.size()){
+		if(tokens[i].compare("P") == 0){
+			location l;
+			l.hexagon = std::stoi(tokens[i+1]);
+			l.position = std::stoi(tokens[i+2]);
+			execute_move_place_ring(l);
+			turn_id *= -1;
+			return;
+		}
+		if(tokens[i].compare("S") == 0 && tokens[i+3].compare("M") == 0){
+			location start,end;
+			start.hexagon = std::stoi(tokens[i+1]);
+			start.position = std::stoi(tokens[i+2]);
+			end.hexagon = std::stoi(tokens[i+4]);
+			end.position = std::stoi(tokens[i+5]);
+			execute_move_move_ring(start, end);
+			i += 6;
+		}
+		if(tokens[i].compare("RS") == 0 && tokens[i+3].compare("RE") == 0 && tokens[i+6].compare("X") == 0){
+			location start,end,ring;
+			start.hexagon = std::stoi(tokens[i+1]);
+			start.position = std::stoi(tokens[i+2]);
+			end.hexagon = std::stoi(tokens[i+4]);
+			end.position = std::stoi(tokens[i+5]);
+			ring.hexagon = std::stoi(tokens[i+7]);
+			ring.position = std::stoi(tokens[i+8]);
+			execute_move_remove_row_ring(start, end, ring);
+			i += 9;
 		}
 	}
+	
 	turn_id *= -1;
 }
 
@@ -344,7 +348,7 @@ vector<pair<Board*, string>> Board::get_valid_moves(){
 
 	//checking for five markers in a row after moveRing
 	for(int i = 0; i < boards_after_moveRing.size(); i++){
-		boards_after_moveRing[i].first->turn_id*=-1;
+		boards_after_moveRing[i].first->turn_id *= -1;
 		vector<pair<Board*, string>> v = possible_removeMarker_orders(boards_after_moveRing[i].first);
 		if(v.size() == 0){
 			boards_after_moveRing[i].first->turn_id*=-1;
