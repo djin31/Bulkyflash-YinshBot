@@ -11,7 +11,8 @@ class Bot{
   public:
     Treenode* root;
     int player_id;
-    double time_limit;
+    double time_left;
+    Board* check_board;
 
     Bot(int player_id, double time);  
 

@@ -1,14 +1,15 @@
 #include "bot.h"
 
-int MAX_DEPTH=4;
+int MAX_DEPTH=3;
 
 Bot::Bot(int player_id, double time_limit){
 	root = new Treenode();
 	// This is done since could not initialise Board in constructor 
 	// to avoid multiple board_copies during set_children()
 	root->board = new Board();  
+	check_board = new Board();
 	this->player_id = player_id;
-	this->time_limit = time_limit;
+	this->time_left = time_limit;
 
     srand(time(NULL));
 
@@ -73,6 +74,8 @@ void Bot::maxVal(Treenode* node, double alpha, double beta, int depth_left){
 void Bot::read_move(){
 	string move, spaced_move;
 	getline(cin,move);
+	
+	double time_tick=clock();
 	spaced_move = move + " ";	
 	for (Treenode* child: root->children){
 		if (child->move_description==move||child->move_description==spaced_move){
@@ -84,6 +87,7 @@ void Bot::read_move(){
 	root->board->execute_move(move);
 	root->children.clear();
 	root->generate_children();
+	time_left = ((double)(clock()-time_tick))/CLOCKS_PER_SEC;
 	
 }
 
@@ -101,6 +105,7 @@ void Bot::place_ring(){
 	location l;
 	coordinates c;
 	while(rings_placed<rings_to_be_placed){
+		double time_tick = clock();
 		rings_placed++;
 		l.hexagon=rand()%6;
 		if (l.hexagon==0)
@@ -122,7 +127,7 @@ void Bot::place_ring(){
 		root->board->execute_move(move);
 		cout<<move<<endl;
 		// root->board->printBoard();
-
+		time_left = ((double)(clock()-time_tick))/CLOCKS_PER_SEC;
 		getline(cin,move);
 		root->board->execute_move(move);
 	}
@@ -133,6 +138,7 @@ void Bot::play(){
 	place_ring();
 
 	while(true){
+		double time_tick=clock();
 		if (player_id==1)
 		{
 			minVal(root,INT_MIN, INT_MAX, MAX_DEPTH);
@@ -152,8 +158,12 @@ void Bot::play(){
 			else
 				cerr<<"NO CHILDREN FOUND\n";
 		}
+		time_left = ((double)(clock()-time_tick))/CLOCKS_PER_SEC;
+		
 		read_move();
-		//root->board->printBoard();
+
+		if (time_left<10)
+			MAX_DEPTH=2;
 
 	}
 	
