@@ -1,6 +1,6 @@
 #include "bot.h"
 
-int MAX_DEPTH=2;
+int MAX_DEPTH=4;
 
 Bot::Bot(int player_id, double time_limit){
 	root = new Treenode();
@@ -32,7 +32,7 @@ void Bot::minVal(Treenode* node, double alpha, double beta, int depth_left){
 	if (node->children.size()==0)
 	{
 		node->generate_children();
-		cerr<<"MINVAL GENERATED CHILDREN "<<node->children.size()<<endl;
+		//cerr<<"MINVAL GENERATED CHILDREN "<<node->children.size()<<endl;
 	}
 	for (Treenode* child: node->children)
 	{
