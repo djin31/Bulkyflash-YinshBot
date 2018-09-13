@@ -344,12 +344,19 @@ vector<pair<Board*, string>> Board::get_valid_moves(){
 
 	//checking for five markers in a row after moveRing
 	for(int i = 0; i < boards_after_moveRing.size(); i++){
+		boards_after_moveRing[i].first->turn_id*=-1;
 		vector<pair<Board*, string>> v = possible_removeMarker_orders(boards_after_moveRing[i].first);
-		if(v.size() == 0)
+		if(v.size() == 0){
+			boards_after_moveRing[i].first->turn_id*=-1;
 			boards_after_moveRing_removeMarker.push_back(boards_after_moveRing[i]);
+		}
 		else{
+			// cerr<<(boards_after_moveRing[i].second + v[0].second)<<"     INSIDE REMOVE MARKER\n";
+			
 			for(int j = 0; j < v.size(); j++){
+
 				pair<Board*, string> p = make_pair(v[j].first, boards_after_moveRing[i].second + v[j].second);
+				p.first->turn_id*=-1;
 				boards_after_moveRing_removeMarker.push_back(p);
 			}
 		}
