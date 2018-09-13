@@ -328,6 +328,7 @@ vector<pair<Board*, string>> Board::get_valid_moves(){
 		else{
 			for(int j = 0; j < v.size(); j++){
 				pair<Board*, string> p = make_pair(v[j].first, boards_after_moveRing[i].second + v[j].second);
+				cerr << p.second << " *******";
 				boards_after_moveRing_removeMarker.push_back(p);
 			}
 		}
