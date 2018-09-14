@@ -110,7 +110,6 @@ void Bot::place_ring(){
 	if (player_id==1)
 	{
 		getline(cin,move);
-
 		root->board->execute_move(move);
 		cerr<<"Received first move\n";
 	}
@@ -146,6 +145,7 @@ void Bot::place_ring(){
 		getline(cin,move);
 		
 		root->board->execute_move(move);
+		root->board->printBoard();
 	}
 }
 

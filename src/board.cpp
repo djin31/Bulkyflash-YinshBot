@@ -25,8 +25,6 @@ Board::Board(){
 }
 
 bool Board::placeRing(int ring_no, coordinates c){
-	if(c.x > 2*board_size || c.y >= 2*board_size)
-		return false;
 	
 	board[c.x][c.y] = ring_no;
 	if (ring_no == 2){
@@ -535,7 +533,7 @@ Board* Board::copy_board(){
 
 void Board::printBoard(){
 	for(int i = 0; i < 2*board_size+1; i++){
-		for(int j = 2*board_size; j >=0 ; j--){
+		for(int j = 0; j <2*board_size+1 ; j++){
 			coordinates c;
 			c.x = i;
 			c.y = j;
