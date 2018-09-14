@@ -20,6 +20,7 @@ bool node_compare(Treenode* a, Treenode* b)
 {
 	return (a->value < b->value);
 }
+
 bool rev_node_compare(Treenode* a, Treenode* b)
 {
 	return (a->value > b->value);
@@ -42,19 +43,28 @@ void Bot::minVal(Treenode* node, double alpha, double beta, int depth_left){
 		children_seen=child;
 		maxVal(node->children[child],alpha,beta,depth_left-1);
 		beta =  min(beta,node->children[child]->value);
-		if (alpha>=beta) 
-		{
-			node->value = child->value;
-			// cerr<<"PRUNED AT VALUE "<<child->value<<endl;
-			// break;
-		}
+		// if (alpha>=beta) 
+		// {
+		// 	node->value = child->value;
+		// 	// cerr<<"PRUNED AT VALUE "<<child->value<<endl;
+		// 	// break;
+		// }
 	}
 	sort(node->children.begin(),node->children.end(), node_compare);
 	// cerr<<"CHILDREN VALUES\n";
 	// for (Treenode* child:node->children)
 	// 	cerr<<child->value<<" ";
 	// cerr<<endl;
-	node->value = node->children[0]->value;
+	if (node->children.size()>0)
+		node->value = node->children.front()->value;
+	else
+	{
+		cerr<<"NO MOVES TO PLAY\n";
+		while(1)
+		{
+			cerr<<"NO MOVES TO PLAY\n";
+		}
+	}
 }
 
 void Bot::maxVal(Treenode* node, double alpha, double beta, int depth_left){
@@ -72,19 +82,28 @@ void Bot::maxVal(Treenode* node, double alpha, double beta, int depth_left){
 	{
 		minVal(node->children[child],alpha,beta, depth_left-1);
 		alpha =  max(alpha,node->children[child]->value);
-		if (alpha>=beta) 
-		{
-			node->value = child->value;
-			// cerr<<"PRUNED AT VALUE "<<child->value<<endl;
-			// break;
-		}
+		// if (alpha>=beta) 
+		// {
+		// 	node->value = child->value;
+		// 	// cerr<<"PRUNED AT VALUE "<<child->value<<endl;
+		// 	// break;
+		// }
 	}
 	sort(node->children.begin(),node->children.end(), rev_node_compare);
 	// cerr<<"CHILDREN VALUES\n";
 	// for (Treenode* child:node->children)
 	// 	cerr<<child->value<<" ";
 	// cerr<<endl;
-	node->value = node->children.front()->value;
+	if (node->children.size()>0)
+		node->value = node->children.front()->value;
+	else
+	{
+		cerr<<"NO MOVES TO PLAY\n";
+		while(1)
+		{
+			cerr<<"NO MOVES TO PLAY\n";
+		}
+	}
 }
 
 void Bot::read_move(){
@@ -98,7 +117,7 @@ void Bot::read_move(){
 			root = child;return;
 		}
 	}
-	//cerr<<"OPPONENT'S MOVE NOT FOUND AMONGST CHILDREN\n";
+	cerr<<"OPPONENT'S MOVE NOT FOUND AMONGST CHILDREN\n";
 	// should generate the new config and remake tree
 	root->board->execute_move(move);
 	root->children.clear();
@@ -137,6 +156,11 @@ void Bot::place_ring(){
 				l.position=0;
 			else
 				l.position=rand()%(6*l.hexagon);
+			if (rings_placed==3)
+			{
+				l.hexagon=5;
+				l.position=13;
+			}
 			c=root->board->location_to_coordinates(l);
 		}
 		move = "P " + to_string(l.hexagon) + " " + to_string(l.position);
