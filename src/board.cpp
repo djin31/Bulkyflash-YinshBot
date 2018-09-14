@@ -856,9 +856,9 @@ vector<pair<Board*, string>> Board::possible_removeMarker_orders(Board* b){
 					possible_orders.push_back(make_pair(tempNewBoard, s1));
 				else{
 					delete tempNewBoard;
-					for(int j = 0; j < more_possibilities.size(); j++){
-						string s2 = s1 + more_possibilities[j].second;
-						possible_orders.push_back(make_pair(more_possibilities[j].first, s2));
+					for(int k = 0; k < more_possibilities.size(); k++){
+						string s2 = s1 + more_possibilities[k].second;
+						possible_orders.push_back(make_pair(more_possibilities[k].first, s2));
 					}
 				}
 			}
@@ -879,9 +879,9 @@ vector<pair<Board*, string>> Board::possible_removeMarker_orders(Board* b){
 					possible_orders.push_back(make_pair(tempNewBoard, s1));
 				else{
 					delete tempNewBoard;
-					for(int j = 0; j < more_possibilities.size(); j++){
-						string s2 = s1 + more_possibilities[j].second;
-						possible_orders.push_back(make_pair(more_possibilities[j].first, s2));
+					for(int k = 0; k < more_possibilities.size(); k++){
+						string s2 = s1 + more_possibilities[k].second;
+						possible_orders.push_back(make_pair(more_possibilities[k].first, s2));
 					}
 				}
 			}
