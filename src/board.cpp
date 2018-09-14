@@ -844,27 +844,52 @@ vector<pair<Board*, string>> Board::possible_removeMarker_orders(Board* b){
 		//remove ring
 		coordinates ring;
 		if(newBoard->turn_id == 1){
-			ring = newBoard->black_rings[0];
-		}
-		else{
-			ring = newBoard->white_rings[0];
-		}
-		newBoard->removeRing(ring);
-		location ring_l = coordinates_to_location(ring);
-		s += "X " + to_string(ring_l.hexagon) + " " + to_string(ring_l.position) + " ";
+			for(int j = 0; j < newBoard->black_rings.size(); j++){
+				ring = newBoard->black_rings[j];
+				Board* tempNewBoard = newBoard->copy_board();
+				tempNewBoard->removeRing(ring);
+				location ring_l = coordinates_to_location(ring);
+				string s1 = s + "X " + to_string(ring_l.hexagon) + " " + to_string(ring_l.position) + " ";
 
-		vector<pair<Board*, string>> more_possibilities;
-		if(!(newBoard->white_rings_out >= rings_to_remove || newBoard->black_rings_out >= rings_to_remove))
-			more_possibilities = possible_removeMarker_orders(newBoard);
-		if(more_possibilities.size() == 0)
-			possible_orders.push_back(make_pair(newBoard, s));
-		else{
-			delete newBoard;
-			for(int j = 0; j < more_possibilities.size(); j++){
-				string s1 = s + more_possibilities[j].second;
-				possible_orders.push_back(make_pair(more_possibilities[j].first, s1));
+				vector<pair<Board*, string>> more_possibilities;
+				if(!(tempNewBoard->white_rings_out >= rings_to_remove || tempNewBoard->black_rings_out >= rings_to_remove))
+					more_possibilities = possible_removeMarker_orders(tempNewBoard);
+				if(more_possibilities.size() == 0)
+					possible_orders.push_back(make_pair(tempNewBoard, s1));
+				else{
+					delete tempNewBoard;
+					for(int j = 0; j < more_possibilities.size(); j++){
+						string s2 = s1 + more_possibilities[j].second;
+						possible_orders.push_back(make_pair(more_possibilities[j].first, s2));
+					}
+				}
 			}
+			delete newBoard;
 		}
+		else{
+			for(int j = 0; j < newBoard->white_rings.size(); j++){
+				ring = newBoard->black_rings[j];
+				Board* tempNewBoard = newBoard->copy_board();
+				tempNewBoard->removeRing(ring);
+				location ring_l = coordinates_to_location(ring);
+				string s1 = s + "X " + to_string(ring_l.hexagon) + " " + to_string(ring_l.position) + " ";
+
+				vector<pair<Board*, string>> more_possibilities;
+				if(!(tempNewBoard->white_rings_out >= rings_to_remove || tempNewBoard->black_rings_out >= rings_to_remove))
+					more_possibilities = possible_removeMarker_orders(tempNewBoard);
+				if(more_possibilities.size() == 0)
+					possible_orders.push_back(make_pair(tempNewBoard, s1));
+				else{
+					delete tempNewBoard;
+					for(int j = 0; j < more_possibilities.size(); j++){
+						string s2 = s1 + more_possibilities[j].second;
+						possible_orders.push_back(make_pair(more_possibilities[j].first, s2));
+					}
+				}
+			}
+			delete newBoard;
+		}
+		
 	}
 	return possible_orders;
 }
