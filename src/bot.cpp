@@ -45,7 +45,7 @@ void Bot::minVal(Treenode* node, double alpha, double beta, int depth_left){
 		{
 			node->value = node->children[child]->value;
 			if (children_seen<node->children.size()-1)
-				cerr<<"PRUNED AT DEPTH "<<depth_left<<endl;
+				//cerr<<"PRUNED AT DEPTH "<<depth_left<<endl;
 			break;
 		}
 	}
@@ -72,7 +72,7 @@ void Bot::maxVal(Treenode* node, double alpha, double beta, int depth_left){
 		{
 			node->value = node->children[child]->value;
 			if (children_seen<node->children.size()-1)
-				cerr<<"PRUNED AT DEPTH "<<depth_left<<endl;
+				//cerr<<"PRUNED AT DEPTH "<<depth_left<<endl;
 			break;
 		}
 	}
@@ -85,10 +85,10 @@ void Bot::read_move(){
 	getline(cin,move);
 
 	// for verification
-		cerr<<"CHECKED MOVE\n";
+		//cerr<<"CHECKED MOVE\n";
 
 	//check_board->execute_move(move);
-		cerr<<"CHECKED MOVE2\n";
+		//cerr<<"CHECKED MOVE2\n";
 
 	double time_tick=clock();
 	spaced_move = move + " ";	
@@ -97,7 +97,7 @@ void Bot::read_move(){
 			root = child;return;
 		}
 	}
-	//cerr<<"OPPONENT'S MOVE NOT FOUND AMONGST CHILDREN\n";
+	////cerr<<"OPPONENT'S MOVE NOT FOUND AMONGST CHILDREN\n";
 	// should generate the new config and remake tree
 	root->board->execute_move(move);
 	root->children.clear();
@@ -113,13 +113,13 @@ void Bot::place_ring(){
 	{
 		getline(cin,move);
 		// for verification
-		cerr<<"CHECKED MOVE\n";
+		//cerr<<"CHECKED MOVE\n";
 
 		//check_board->execute_move(move);
-		cerr<<"CHECKED MOVE2\n";
+		//cerr<<"CHECKED MOVE2\n";
 
 		root->board->execute_move(move);
-		cerr<<"Received first move\n";
+		//cerr<<"Received first move\n";
 	}
 	int rings_placed=0;
 	int rings_to_be_placed=5;
@@ -146,9 +146,9 @@ void Bot::place_ring(){
 		}
 		move = "P " + to_string(l.hexagon) + " " + to_string(l.position);
 		// for verification
-		cerr<<"CHECKED MOVE\n";
+		//cerr<<"CHECKED MOVE\n";
 		//check_board->execute_move(move);
-		cerr<<"CHECKED MOVE2\n";
+		//cerr<<"CHECKED MOVE2\n";
 
 		root->board->execute_move(move);
 		cout<<move<<endl;
@@ -156,9 +156,9 @@ void Bot::place_ring(){
 		time_left -= ((double)(clock()-time_tick))/CLOCKS_PER_SEC;
 		getline(cin,move);
 		// for verification
-		cerr<<"CHECKED MOVE\n";
+		//cerr<<"CHECKED MOVE\n";
 		//check_board->execute_move(move);
-		cerr<<"CHECKED MOVE2\n";
+		//cerr<<"CHECKED MOVE2\n";
 		
 		root->board->execute_move(move);
 		root->board->printBoard();
@@ -177,30 +177,32 @@ void Bot::play(){
 			if (root->children.size()>0){
 				root = root->children.front();
 				// for verification
-		cerr<<"CHECKED MOVE\n";
+		//cerr<<"CHECKED MOVE\n";
 
 				//check_board->execute_move(root->move_description);
-		cerr<<"CHECKED MOVE2\n";
-
+		//cerr<<"CHECKED MOVE2\n";
+				cerr<<root->move_description<<endl;
+				root->board->printBoard();
 				cout<<root->move_description<<endl;
 			}
-			else
-				cerr<<"NO CHILDREN FOUND\n";
+			//else
+				//cerr<<"NO CHILDREN FOUND\n";
 		}
 		else{
 			maxVal(root,INT_MIN, INT_MAX, MAX_DEPTH);
 			if (root->children.size()>0){
 				root = root->children.front();
 				// for verification
-		cerr<<"CHECKED MOVE\n";
+		//cerr<<"CHECKED MOVE\n";
 
 				//check_board->execute_move(root->move_description);
-		cerr<<"CHECKED MOVE2\n";
-
+		//cerr<<"CHECKED MOVE2\n";
+				cerr<<root->move_description<<endl;
+				root->board->printBoard();
 				cout<<root->move_description<<endl;
 			}
-			else
-				cerr<<"NO CHILDREN FOUND\n";
+			//else
+				//cerr<<"NO CHILDREN FOUND\n";
 		}
 		time_left -= ((double)(clock()-time_tick))/CLOCKS_PER_SEC;
 		

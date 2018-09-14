@@ -362,7 +362,7 @@ vector<pair<Board*, string>> Board::get_valid_moves(){
 			boards_after_moveRing_removeMarker.push_back(boards_after_moveRing[i]);
 		}
 		else{
-			cerr<<(boards_after_moveRing[i].second + v[0].second)<<"     INSIDE REMOVE MARKER\n";
+			//cerr<<(boards_after_moveRing[i].second + v[0].second)<<"     INSIDE REMOVE MARKER\n";
 			
 			for(int j = 0; j < v.size(); j++){
 
@@ -546,10 +546,10 @@ void Board::printBoard(){
 			coordinates c;
 			c.x = i;
 			c.y = j;
-			if (checkValid(c))
+			//if (checkValid(c))
 				cerr << board[i][j] << " ";
-			else
-				cerr << "  ";
+			//else
+			//	cerr << "  ";
 			if(j == 2*board_size)
 				cerr << endl;
 		}
