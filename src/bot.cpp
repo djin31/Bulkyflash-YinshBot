@@ -82,7 +82,7 @@ void Bot::read_move(){
 			root = child;return;
 		}
 	}
-	cerr<<"OPPONENT'S MOVE NOT FOUND AMONGST CHILDREN\n";
+	//cerr<<"OPPONENT'S MOVE NOT FOUND AMONGST CHILDREN\n";
 	// should generate the new config and remake tree
 	root->board->execute_move(move);
 	root->children.clear();
@@ -130,6 +130,7 @@ void Bot::place_ring(){
 		time_left = ((double)(clock()-time_tick))/CLOCKS_PER_SEC;
 		getline(cin,move);
 		root->board->execute_move(move);
+		root->board->printBoard();
 	}
 }
 
