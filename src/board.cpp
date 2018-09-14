@@ -25,8 +25,6 @@ Board::Board(){
 }
 
 bool Board::placeRing(int ring_no, coordinates c){
-	if(c.x > 2*board_size || c.y >= 2*board_size)
-		return false;
 	
 	board[c.x][c.y] = ring_no;
 	if (ring_no == 2){
