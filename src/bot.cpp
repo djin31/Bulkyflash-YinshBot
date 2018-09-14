@@ -1,6 +1,7 @@
 #include "bot.h"
 
 int MAX_DEPTH=2;
+int BOARD_SIZE=5;
 
 Bot::Bot(int player_id, double time_limit){
 	root = new Treenode();
@@ -42,10 +43,15 @@ void Bot::minVal(Treenode* node, double alpha, double beta, int depth_left){
 		if (alpha>=beta) 
 		{
 			node->value = child->value;
-			break;
+			// cerr<<"PRUNED AT VALUE "<<child->value<<endl;
+			// break;
 		}
 	}
 	sort(node->children.begin(),node->children.end(), node_compare);
+	// cerr<<"CHILDREN VALUES\n";
+	// for (Treenode* child:node->children)
+	// 	cerr<<child->value<<" ";
+	// cerr<<endl;
 	node->value = node->children[0]->value;
 }
 
@@ -66,22 +72,21 @@ void Bot::maxVal(Treenode* node, double alpha, double beta, int depth_left){
 		if (alpha>=beta) 
 		{
 			node->value = child->value;
-			break;
+			// cerr<<"PRUNED AT VALUE "<<child->value<<endl;
+			// break;
 		}
 	}
 	sort(node->children.begin(),node->children.end(), rev_node_compare);
+	// cerr<<"CHILDREN VALUES\n";
+	// for (Treenode* child:node->children)
+	// 	cerr<<child->value<<" ";
+	// cerr<<endl;
 	node->value = node->children.front()->value;
 }
 
 void Bot::read_move(){
 	string move, spaced_move;
 	getline(cin,move);
-
-	// for verification
-		cerr<<"CHECKED MOVE\n";
-
-	//check_board->execute_move(move);
-		cerr<<"CHECKED MOVE2\n";
 
 	double time_tick=clock();
 	spaced_move = move + " ";	
@@ -105,11 +110,6 @@ void Bot::place_ring(){
 	if (player_id==1)
 	{
 		getline(cin,move);
-		// for verification
-		cerr<<"CHECKED MOVE\n";
-
-		//check_board->execute_move(move);
-		cerr<<"CHECKED MOVE2\n";
 
 		root->board->execute_move(move);
 		cerr<<"Received first move\n";
@@ -121,7 +121,7 @@ void Bot::place_ring(){
 	while(rings_placed<rings_to_be_placed){
 		double time_tick = clock();
 		rings_placed++;
-		l.hexagon=rand()%6;
+		l.hexagon=rand()%(BOARD_SIZE+1);
 		if (l.hexagon==0)
 			l.position=0;
 		else
@@ -130,7 +130,7 @@ void Bot::place_ring(){
 		c=root->board->location_to_coordinates(l);
 		while (!(root->board->checkValid(c) && root->board->board[c.x][c.y]==0))
 		{
-			l.hexagon=rand()%6;
+			l.hexagon=rand()%(BOARD_SIZE+1);
 			if (l.hexagon==0)
 				l.position=0;
 			else
@@ -138,20 +138,12 @@ void Bot::place_ring(){
 			c=root->board->location_to_coordinates(l);
 		}
 		move = "P " + to_string(l.hexagon) + " " + to_string(l.position);
-		// for verification
-		cerr<<"CHECKED MOVE\n";
-		//check_board->execute_move(move);
-		cerr<<"CHECKED MOVE2\n";
 
 		root->board->execute_move(move);
 		cout<<move<<endl;
 		// root->board->printBoard();
 		time_left -= ((double)(clock()-time_tick))/CLOCKS_PER_SEC;
 		getline(cin,move);
-		// for verification
-		cerr<<"CHECKED MOVE\n";
-		//check_board->execute_move(move);
-		cerr<<"CHECKED MOVE2\n";
 		
 		root->board->execute_move(move);
 	}
@@ -169,10 +161,10 @@ void Bot::play(){
 			if (root->children.size()>0){
 				root = root->children.front();
 				// for verification
-		cerr<<"CHECKED MOVE\n";
+		// cerr<<"CHECKED MOVE\n";
 
 				//check_board->execute_move(root->move_description);
-		cerr<<"CHECKED MOVE2\n";
+		// cerr<<"CHECKED MOVE2\n";
 
 				cout<<root->move_description<<endl;
 			}
@@ -184,10 +176,10 @@ void Bot::play(){
 			if (root->children.size()>0){
 				root = root->children.front();
 				// for verification
-		cerr<<"CHECKED MOVE\n";
+		// cerr<<"CHECKED MOVE\n";
 
 				//check_board->execute_move(root->move_description);
-		cerr<<"CHECKED MOVE2\n";
+		// cerr<<"CHECKED MOVE2\n";
 
 				cout<<root->move_description<<endl;
 			}
