@@ -866,7 +866,7 @@ vector<pair<Board*, string>> Board::possible_removeMarker_orders(Board* b){
 		}
 		else{
 			for(int j = 0; j < newBoard->white_rings.size(); j++){
-				ring = newBoard->black_rings[j];
+				ring = newBoard->white_rings[j];
 				Board* tempNewBoard = newBoard->copy_board();
 				tempNewBoard->removeRing(ring);
 				location ring_l = coordinates_to_location(ring);
