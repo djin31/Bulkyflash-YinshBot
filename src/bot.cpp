@@ -1,7 +1,11 @@
 #include "bot.h"
 
+<<<<<<< HEAD
 int MAX_DEPTH=2;
 int BOARD_SIZE=5;
+=======
+int MAX_DEPTH=3;
+>>>>>>> a744cf86805beae9632f5c9c676aeadd6b476659
 
 Bot::Bot(int player_id, double time_limit){
 	root = new Treenode();
@@ -36,12 +40,15 @@ void Bot::minVal(Treenode* node, double alpha, double beta, int depth_left){
 		node->generate_children();
 		//cerr<<"MINVAL GENERATED CHILDREN "<<node->children.size()<<endl;
 	}
-	for (Treenode* child: node->children)
+	int children_seen=0;
+	for (int child=0; child< node->children.size();child++)
 	{
-		maxVal(child,alpha,beta,depth_left-1);
-		beta =  min(beta,child->value);
+		children_seen=child;
+		maxVal(node->children[child],alpha,beta,depth_left-1);
+		beta =  min(beta,node->children[child]->value);
 		if (alpha>=beta) 
 		{
+<<<<<<< HEAD
 			node->value = child->value;
 			// cerr<<"PRUNED AT VALUE "<<child->value<<endl;
 			// break;
@@ -52,6 +59,15 @@ void Bot::minVal(Treenode* node, double alpha, double beta, int depth_left){
 	// for (Treenode* child:node->children)
 	// 	cerr<<child->value<<" ";
 	// cerr<<endl;
+=======
+			node->value = node->children[child]->value;
+			if (children_seen<node->children.size()-1)
+				cerr<<"PRUNED AT DEPTH "<<depth_left<<endl;
+			break;
+		}
+	}
+	sort(node->children.begin(),node->children.begin()+children_seen, node_compare);
+>>>>>>> a744cf86805beae9632f5c9c676aeadd6b476659
 	node->value = node->children[0]->value;
 }
 
@@ -65,12 +81,14 @@ void Bot::maxVal(Treenode* node, double alpha, double beta, int depth_left){
 	{
 		node->generate_children();
 	}
-	for (Treenode* child: node->children)
+	int children_seen=0;
+	for (int child=0; child< node->children.size();child++)
 	{
-		minVal(child,alpha,beta, depth_left-1);
-		alpha =  max(alpha,child->value);
+		minVal(node->children[child],alpha,beta, depth_left-1);
+		alpha =  max(alpha,node->children[child]->value);
 		if (alpha>=beta) 
 		{
+<<<<<<< HEAD
 			node->value = child->value;
 			// cerr<<"PRUNED AT VALUE "<<child->value<<endl;
 			// break;
@@ -81,6 +99,15 @@ void Bot::maxVal(Treenode* node, double alpha, double beta, int depth_left){
 	// for (Treenode* child:node->children)
 	// 	cerr<<child->value<<" ";
 	// cerr<<endl;
+=======
+			node->value = node->children[child]->value;
+			if (children_seen<node->children.size()-1)
+				cerr<<"PRUNED AT DEPTH "<<depth_left<<endl;
+			break;
+		}
+	}
+	sort(node->children.begin(),node->children.begin()+children_seen, rev_node_compare);
+>>>>>>> a744cf86805beae9632f5c9c676aeadd6b476659
 	node->value = node->children.front()->value;
 }
 
@@ -95,7 +122,7 @@ void Bot::read_move(){
 			root = child;return;
 		}
 	}
-	cerr<<"OPPONENT'S MOVE NOT FOUND AMONGST CHILDREN\n";
+	//cerr<<"OPPONENT'S MOVE NOT FOUND AMONGST CHILDREN\n";
 	// should generate the new config and remake tree
 	root->board->execute_move(move);
 	root->children.clear();
