@@ -1,6 +1,6 @@
 #include "bot.h"
 
-int MAX_DEPTH=3;
+int MAX_DEPTH=2;
 
 Bot::Bot(int player_id, double time_limit){
 	root = new Treenode();
@@ -42,6 +42,7 @@ void Bot::minVal(Treenode* node, double alpha, double beta, int depth_left){
 		if (alpha>=beta) 
 		{
 			node->value = child->value;
+			break;
 		}
 	}
 	sort(node->children.begin(),node->children.end(), node_compare);
@@ -65,6 +66,7 @@ void Bot::maxVal(Treenode* node, double alpha, double beta, int depth_left){
 		if (alpha>=beta) 
 		{
 			node->value = child->value;
+			break;
 		}
 	}
 	sort(node->children.begin(),node->children.end(), rev_node_compare);
@@ -74,7 +76,13 @@ void Bot::maxVal(Treenode* node, double alpha, double beta, int depth_left){
 void Bot::read_move(){
 	string move, spaced_move;
 	getline(cin,move);
-	
+
+	// for verification
+		cerr<<"CHECKED MOVE\n";
+
+	//check_board->execute_move(move);
+		cerr<<"CHECKED MOVE2\n";
+
 	double time_tick=clock();
 	spaced_move = move + " ";	
 	for (Treenode* child: root->children){
@@ -87,7 +95,7 @@ void Bot::read_move(){
 	root->board->execute_move(move);
 	root->children.clear();
 	root->generate_children();
-	time_left = ((double)(clock()-time_tick))/CLOCKS_PER_SEC;
+	time_left -= ((double)(clock()-time_tick))/CLOCKS_PER_SEC;
 	
 }
 
@@ -97,6 +105,12 @@ void Bot::place_ring(){
 	if (player_id==1)
 	{
 		getline(cin,move);
+		// for verification
+		cerr<<"CHECKED MOVE\n";
+
+		//check_board->execute_move(move);
+		cerr<<"CHECKED MOVE2\n";
+
 		root->board->execute_move(move);
 		cerr<<"Received first move\n";
 	}
@@ -124,11 +138,21 @@ void Bot::place_ring(){
 			c=root->board->location_to_coordinates(l);
 		}
 		move = "P " + to_string(l.hexagon) + " " + to_string(l.position);
+		// for verification
+		cerr<<"CHECKED MOVE\n";
+		//check_board->execute_move(move);
+		cerr<<"CHECKED MOVE2\n";
+
 		root->board->execute_move(move);
 		cout<<move<<endl;
 		// root->board->printBoard();
-		time_left = ((double)(clock()-time_tick))/CLOCKS_PER_SEC;
+		time_left -= ((double)(clock()-time_tick))/CLOCKS_PER_SEC;
 		getline(cin,move);
+		// for verification
+		cerr<<"CHECKED MOVE\n";
+		//check_board->execute_move(move);
+		cerr<<"CHECKED MOVE2\n";
+		
 		root->board->execute_move(move);
 	}
 }
@@ -144,6 +168,12 @@ void Bot::play(){
 			minVal(root,INT_MIN, INT_MAX, MAX_DEPTH);
 			if (root->children.size()>0){
 				root = root->children.front();
+				// for verification
+		cerr<<"CHECKED MOVE\n";
+
+				//check_board->execute_move(root->move_description);
+		cerr<<"CHECKED MOVE2\n";
+
 				cout<<root->move_description<<endl;
 			}
 			else
@@ -153,12 +183,18 @@ void Bot::play(){
 			maxVal(root,INT_MIN, INT_MAX, MAX_DEPTH);
 			if (root->children.size()>0){
 				root = root->children.front();
+				// for verification
+		cerr<<"CHECKED MOVE\n";
+
+				//check_board->execute_move(root->move_description);
+		cerr<<"CHECKED MOVE2\n";
+
 				cout<<root->move_description<<endl;
 			}
 			else
 				cerr<<"NO CHILDREN FOUND\n";
 		}
-		time_left = ((double)(clock()-time_tick))/CLOCKS_PER_SEC;
+		time_left -= ((double)(clock()-time_tick))/CLOCKS_PER_SEC;
 		
 		read_move();
 
