@@ -43,12 +43,14 @@ void Bot::minVal(Treenode* node, double alpha, double beta, int depth_left){
 		children_seen=child;
 		maxVal(node->children[child],alpha,beta,depth_left-1);
 		beta =  min(beta,node->children[child]->value);
+
 		// if (alpha>=beta) 
 		// {
 		// 	node->value = child->value;
 		// 	// cerr<<"PRUNED AT VALUE "<<child->value<<endl;
 		// 	// break;
 		// }
+
 	}
 	sort(node->children.begin(),node->children.end(), node_compare);
 	// cerr<<"CHILDREN VALUES\n";
@@ -82,12 +84,14 @@ void Bot::maxVal(Treenode* node, double alpha, double beta, int depth_left){
 	{
 		minVal(node->children[child],alpha,beta, depth_left-1);
 		alpha =  max(alpha,node->children[child]->value);
+
 		// if (alpha>=beta) 
 		// {
 		// 	node->value = child->value;
 		// 	// cerr<<"PRUNED AT VALUE "<<child->value<<endl;
 		// 	// break;
 		// }
+
 	}
 	sort(node->children.begin(),node->children.end(), rev_node_compare);
 	// cerr<<"CHILDREN VALUES\n";
@@ -132,8 +136,9 @@ void Bot::place_ring(){
 	if (player_id==1)
 	{
 		getline(cin,move);
+
 		root->board->execute_move(move);
-		cerr<<"Received first move\n";
+		//cerr<<"Received first move\n";
 	}
 	int rings_placed=0;
 	int rings_to_be_placed=5;
@@ -188,30 +193,21 @@ void Bot::play(){
 			if (root->children.size()>0){
 				root = root->children.front();
 				// for verification
-		// cerr<<"CHECKED MOVE\n";
-
-				//check_board->execute_move(root->move_description);
-		// cerr<<"CHECKED MOVE2\n";
 
 				cout<<root->move_description<<endl;
 			}
-			else
-				cerr<<"NO CHILDREN FOUND\n";
+			//else
+				//cerr<<"NO CHILDREN FOUND\n";
 		}
 		else{
 			maxVal(root,INT_MIN, INT_MAX, MAX_DEPTH);
 			if (root->children.size()>0){
 				root = root->children.front();
-				// for verification
-		// cerr<<"CHECKED MOVE\n";
-
-				//check_board->execute_move(root->move_description);
-		// cerr<<"CHECKED MOVE2\n";
 
 				cout<<root->move_description<<endl;
 			}
-			else
-				cerr<<"NO CHILDREN FOUND\n";
+			//else
+				//cerr<<"NO CHILDREN FOUND\n";
 		}
 		time_left -= ((double)(clock()-time_tick))/CLOCKS_PER_SEC;
 		
