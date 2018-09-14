@@ -76,6 +76,9 @@ class Board{
 
 		// gives the number of rings which are blocked
 		int blocked_rings(coordinates c);
+
+		double eval_markers_in_row();
+
 		//get the valid moves on the current board
 		vector<pair<Board*, string>> get_valid_moves();		//does not give children when all the rings have not been placed // use only for move ring and remove ring
 
@@ -87,6 +90,7 @@ class Board{
 
 		//function to print the board
 		void printBoard();
+
 };
 
 #endif

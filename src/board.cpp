@@ -1,5 +1,12 @@
 #include "board.h"
 
+double RING_WEIGHTS = 10000;
+double MARKER_WEIGHTS = 2;
+double BLOCKING_WEIGHT= 5;
+double WEIGHT_MARKERS_IN_LINE= -0.5;
+double NORMALIZE_WEIGHT = 0.5;
+double WEIGHT_TO_RING_IN_LINE = 7;
+
 Board::Board(){
 
 	//vector<vector<int>> board;		// 0 -> empty, 1 -> black marker, 2 -> black ring, -1 -> white marker, -2 -> white ring
@@ -199,7 +206,7 @@ double Board::eval_func(){
 		return -hugeNumber;
 	}
 
-	double ring_weights = 10, marker_weights = 1, blocking_weight=1;
+	double ring_weights = RING_WEIGHTS, marker_weights = MARKER_WEIGHTS, blocking_weight=BLOCKING_WEIGHT, weight_markers_in_line=WEIGHT_MARKERS_IN_LINE;
 	double score;
 
 	int rings_blocked_by_white = 0, rings_blocked_by_black=0;
@@ -210,7 +217,7 @@ double Board::eval_func(){
 		rings_blocked_by_black+=blocked_rings(c);
 
 	
-	score = ring_weights*(white_rings_out-black_rings_out) + marker_weights*(white_markers-black_markers) + blocking_weight*(rings_blocked_by_white-rings_blocked_by_black);
+	score = ring_weights*(white_rings_out-black_rings_out) + marker_weights*(white_markers-black_markers) + blocking_weight*(rings_blocked_by_white-rings_blocked_by_black) + this->eval_markers_in_row();
 	
 	if (turn_id==-1)
 		score+=ring_weights*white_rings_out;
@@ -294,6 +301,7 @@ int Board::blocked_rings(coordinates c){
 void Board::execute_move(string s){
 	std::vector<std::string> tokens = split(s, ' ');
 	int i = 0;
+	cerr<<"EXECUTE MOVE "<<tokens.size()<<endl;
 	while(i < tokens.size()){
 		if(tokens[i].compare("P") == 0){
 			location l;
@@ -303,7 +311,7 @@ void Board::execute_move(string s){
 			turn_id *= -1;
 			return;
 		}
-		if(tokens[i].compare("S") == 0 && tokens[i+3].compare("M") == 0){
+		else if(tokens[i].compare("S") == 0 && tokens[i+3].compare("M") == 0){
 			location start,end;
 			start.hexagon = std::stoi(tokens[i+1]);
 			start.position = std::stoi(tokens[i+2]);
@@ -312,7 +320,7 @@ void Board::execute_move(string s){
 			execute_move_move_ring(start, end);
 			i += 6;
 		}
-		if(tokens[i].compare("RS") == 0 && tokens[i+3].compare("RE") == 0 && tokens[i+6].compare("X") == 0){
+		else if(tokens[i].compare("RS") == 0 && tokens[i+3].compare("RE") == 0 && tokens[i+6].compare("X") == 0){
 			location start,end,ring;
 			start.hexagon = std::stoi(tokens[i+1]);
 			start.position = std::stoi(tokens[i+2]);
@@ -323,6 +331,8 @@ void Board::execute_move(string s){
 			execute_move_remove_row_ring(start, end, ring);
 			i += 9;
 		}
+		else
+			break;
 	}
 	
 	turn_id *= -1;
@@ -890,4 +900,139 @@ vector<pair<Board*, string>> Board::possible_removeMarker_orders(Board* b){
 		
 	}
 	return possible_orders;
+}
+
+double Board::eval_markers_in_row(){
+	double weight_to_ring=WEIGHT_TO_RING_IN_LINE,normalize_weight=NORMALIZE_WEIGHT;
+	double retVal=0;
+
+	coordinates start_coord,end_coord;
+	
+	for (int i=0;i<2*board_size+1;i++){
+		for (int j=0;j<2*board_size+1;j++){
+			
+			start_coord.x=i;
+			start_coord.y=j;
+			if (!(checkValid(start_coord) && abs(board[i][j])==1))
+				continue;
+			
+			//moving down
+			// cerr<<"check down"<<endl;
+			int counter=1,k=j+1,l;
+			end_coord.x=i;
+			end_coord.y=k;
+
+			while(checkValid(end_coord))
+			{
+				if (board[i][k]!=board[i][j])
+					break;
+				counter++;
+				end_coord.y=++k;
+				
+			}
+			// retVal - since white has negative turn id
+			retVal-=board[i][j]*counter;
+			if (checkValid(end_coord))
+				retVal-=board[i][k]*counter*weight_to_ring;
+
+			// moving up
+			// cerr<<"check up"<<endl;
+			end_coord.x=i;
+			end_coord.y=k;
+
+			counter=1;
+			k=j-1;
+			while(checkValid(end_coord))
+			{
+				if (board[i][k]!=board[i][j])
+					break;
+				counter++;
+				end_coord.y=--k;
+				
+			}
+			retVal-=board[i][j]*counter;
+			if (checkValid(end_coord))
+				retVal-=board[i][k]*counter*weight_to_ring;
+
+			// moving right sideways
+			// cerr<<"check right"<<endl;
+			counter=1;
+			k=i+1;
+			end_coord.x=k;
+			end_coord.y=j;
+			while(checkValid(end_coord))
+			{
+				if (board[k][j]!=board[i][j])
+					break;
+				counter++;
+				end_coord.x=++k;
+				
+			}
+			retVal-=board[i][j]*counter;
+			if (checkValid(end_coord))
+				retVal-=board[k][i]*counter*weight_to_ring;
+
+			// moving left sideways
+			// cerr<<"check left"<<endl;
+			counter=1;
+			k=i-1;
+			end_coord.x=k;
+			end_coord.y=j;
+			while(checkValid(end_coord))
+			{
+				if (board[k][j]!=board[i][j])
+					break;
+				counter++;
+				end_coord.x=--k;
+				
+			}
+			retVal-=board[i][j]*counter;
+			if (checkValid(end_coord))
+				retVal-=board[k][i]*counter*weight_to_ring;
+			
+			// moving diagonal right down
+			// cerr<<"check diagonal right"<<endl;
+			counter=1;
+			k=i+1;
+			l=j+1;
+			end_coord.x=k;
+			end_coord.y=l;
+			while(checkValid(end_coord))
+			{
+				if (board[k][l]!=board[i][j])
+					break;
+				counter++;
+				end_coord.x=++k;
+				end_coord.y=++l;
+				
+			}
+			retVal-=board[i][j]*counter;
+			if (checkValid(end_coord))
+				retVal-=board[k][l]*counter*weight_to_ring;
+
+			// moving diagonal right down
+			// cerr<<"check diagonal leftt"<<endl;
+			
+			counter=1;
+			k=i-1;
+			l=j-1;
+			end_coord.x=k;
+			end_coord.y=l;
+			while(checkValid(end_coord))
+			{
+				if (board[k][l]!=board[i][j])
+					break;
+				counter++;
+				end_coord.x=--k;
+				end_coord.y=--l;
+				
+			}
+			retVal-=board[i][j]*counter;
+			if (checkValid(end_coord))
+				retVal-=board[k][l]*counter*weight_to_ring;
+
+		}
+	}
+	return retVal*normalize_weight;
+
 }
