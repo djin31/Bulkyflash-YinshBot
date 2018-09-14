@@ -1,6 +1,6 @@
 #include "bot.h"
 
-int MAX_DEPTH=2;
+int MAX_DEPTH=3;
 
 Bot::Bot(int player_id, double time_limit){
 	root = new Treenode();
@@ -35,17 +35,21 @@ void Bot::minVal(Treenode* node, double alpha, double beta, int depth_left){
 		node->generate_children();
 		//cerr<<"MINVAL GENERATED CHILDREN "<<node->children.size()<<endl;
 	}
-	for (Treenode* child: node->children)
+	int children_seen=0;
+	for (int child=0; child< node->children.size();child++)
 	{
-		maxVal(child,alpha,beta,depth_left-1);
-		beta =  min(beta,child->value);
+		children_seen=child;
+		maxVal(node->children[child],alpha,beta,depth_left-1);
+		beta =  min(beta,node->children[child]->value);
 		if (alpha>=beta) 
 		{
-			node->value = child->value;
+			node->value = node->children[child]->value;
+			if (children_seen<node->children.size()-1)
+				cerr<<"PRUNED AT DEPTH "<<depth_left<<endl;
 			break;
 		}
 	}
-	sort(node->children.begin(),node->children.end(), node_compare);
+	sort(node->children.begin(),node->children.begin()+children_seen, node_compare);
 	node->value = node->children[0]->value;
 }
 
@@ -59,17 +63,20 @@ void Bot::maxVal(Treenode* node, double alpha, double beta, int depth_left){
 	{
 		node->generate_children();
 	}
-	for (Treenode* child: node->children)
+	int children_seen=0;
+	for (int child=0; child< node->children.size();child++)
 	{
-		minVal(child,alpha,beta, depth_left-1);
-		alpha =  max(alpha,child->value);
+		minVal(node->children[child],alpha,beta, depth_left-1);
+		alpha =  max(alpha,node->children[child]->value);
 		if (alpha>=beta) 
 		{
-			node->value = child->value;
+			node->value = node->children[child]->value;
+			if (children_seen<node->children.size()-1)
+				cerr<<"PRUNED AT DEPTH "<<depth_left<<endl;
 			break;
 		}
 	}
-	sort(node->children.begin(),node->children.end(), rev_node_compare);
+	sort(node->children.begin(),node->children.begin()+children_seen, rev_node_compare);
 	node->value = node->children.front()->value;
 }
 
