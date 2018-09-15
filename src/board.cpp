@@ -195,7 +195,7 @@ void Board::execute_move_remove_row_ring(location start, location end, location 
 	removeRing(location_to_coordinates(ring));
 }
 
-double Board::eval_func(){
+double Board::eval_func(int player_id){
 	double hugeNumber = 100000;
 
 	// if terminal return large number
@@ -219,7 +219,7 @@ double Board::eval_func(){
 	
 	score = ring_weights*(white_rings_out-black_rings_out) + marker_weights*(white_markers-black_markers) + blocking_weight*(rings_blocked_by_white-rings_blocked_by_black) + this->eval_markers_in_row();
 	
-	if (turn_id==-1)
+	if (player_id==-1)
 		score+=ring_weights*white_rings_out;
 	else
 		score-=ring_weights*black_rings_out;

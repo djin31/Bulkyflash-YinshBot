@@ -72,7 +72,7 @@ class Board{
 		void execute_move(string s);
 
 		//give the goodness of the current state of the board
-		double eval_func();
+		double eval_func(int player_id);
 
 		// gives the number of rings which are blocked
 		int blocked_rings(coordinates c);

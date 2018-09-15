@@ -29,7 +29,7 @@ bool rev_node_compare(Treenode* a, Treenode* b)
 void Bot::minVal(Treenode* node, double alpha, double beta, int depth_left){
 	if (depth_left==0||node->board->check_terminal())
 	{
-		node->value = node->board->eval_func();
+		node->value = node->board->eval_func(player_id);
 		return;
 	}
 	if (node->children.size()==0)
@@ -72,7 +72,7 @@ void Bot::minVal(Treenode* node, double alpha, double beta, int depth_left){
 void Bot::maxVal(Treenode* node, double alpha, double beta, int depth_left){
 	if (depth_left==0||node->board->check_terminal())
 	{
-		node->value = node->board->eval_func();
+		node->value = node->board->eval_func(player_id);
 		return;
 	}
 	if (node->children.size()==0)
@@ -161,11 +161,7 @@ void Bot::place_ring(){
 				l.position=0;
 			else
 				l.position=rand()%(6*l.hexagon);
-			if (rings_placed==3)
-			{
-				l.hexagon=5;
-				l.position=13;
-			}
+			
 			c=root->board->location_to_coordinates(l);
 		}
 		move = "P " + to_string(l.hexagon) + " " + to_string(l.position);
@@ -177,7 +173,6 @@ void Bot::place_ring(){
 		getline(cin,move);
 		
 		root->board->execute_move(move);
-		root->board->printBoard();
 	}
 }
 
@@ -185,7 +180,10 @@ void Bot::play(){
 	
 	place_ring();
 
-	while(true){
+	int MAX_MOVES=100;
+	while(MAX_MOVES>0){
+		MAX_MOVES--;
+
 		double time_tick=clock();
 		if (player_id==1)
 		{
@@ -196,8 +194,7 @@ void Bot::play(){
 
 				cout<<root->move_description<<endl;
 			}
-			//else
-				//cerr<<"NO CHILDREN FOUND\n";
+			
 		}
 		else{
 			maxVal(root,INT_MIN, INT_MAX, MAX_DEPTH);
@@ -206,8 +203,7 @@ void Bot::play(){
 
 				cout<<root->move_description<<endl;
 			}
-			//else
-				//cerr<<"NO CHILDREN FOUND\n";
+			
 		}
 		time_left -= ((double)(clock()-time_tick))/CLOCKS_PER_SEC;
 		
