@@ -184,7 +184,7 @@ location Bot::best_place_ring(){
 	coordinates best_coord, c;
 	location best_location, l;
 	double max_block=INT_MIN, block;
-	
+	double randomising_seed;
 	Board* newBoard = root->board->copy_board();
 
 	for (int i=1;i<BOARD_SIZE;i++){
@@ -194,10 +194,10 @@ location Bot::best_place_ring(){
 			c = root->board->location_to_coordinates(l);
 			if (root->board->board[c.x][c.y]!=0)
 				continue;
-			
+			randomising_seed=double(rand())/RAND_MAX;
 			newBoard->board[c.x][c.y]=2*player_id;
-			block = newBoard->blocked_rings(c);
-			if (block>max_block){
+			block = newBoard->blocked_rings(c) + 2*newBoard->self_blocked_rings(c);
+			if (block>max_block && randomising_seed>0.5){
 				max_block=block;
 				best_coord.x=c.x;
 				best_coord.y=c.y;

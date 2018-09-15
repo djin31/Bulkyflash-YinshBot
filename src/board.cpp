@@ -3,9 +3,9 @@
 double RING_WEIGHTS = 10000;
 double MARKER_WEIGHTS = 2;
 double BLOCKING_WEIGHT= 5;
-double WEIGHT_MARKERS_IN_LINE= -0.5;
-double NORMALIZE_WEIGHT = 1;
-double WEIGHT_TO_RING_IN_LINE = 10;
+double WEIGHT_MARKERS_IN_LINE= 1;
+double NORMALIZE_WEIGHT = 0.5;
+double WEIGHT_TO_RING_IN_LINE = 7;
 
 Board::Board(){
 
@@ -295,6 +295,66 @@ int Board::blocked_rings(coordinates c){
 		retVal-=ring_id/board[it.x][it.y];
 	if (!checkValid(it))
 		retVal-=1;
+	return retVal;
+}
+
+int Board::self_blocked_rings(coordinates c){
+	int ring_id = board[c.x][c.y];
+
+	coordinates it;
+	int retVal=0;
+
+	//moving up
+	it.x=c.x;
+	it.y=c.y-1;
+	while (checkValid(it) && abs(board[it.x][it.y])<=1)
+		it.y--;
+	if (checkValid(it) && board[it.x][it.y]==ring_id)
+		retVal-=ring_id/board[it.x][it.y];
+	
+	//moving down
+	it.x=c.x;
+	it.y=c.y+1;
+	while (checkValid(it) && abs(board[it.x][it.y])<=1)
+		it.y++;
+	if (checkValid(it) && board[it.x][it.y]==ring_id)
+		retVal-=ring_id/board[it.x][it.y];
+
+	//moving right
+	it.x=c.x+1;
+	it.y=c.y;
+	while (checkValid(it) && abs(board[it.x][it.y])<=1)
+		it.x++;
+	if (checkValid(it) && board[it.x][it.y]==ring_id)
+		retVal-=ring_id/board[it.x][it.y];
+
+	//moving left
+	it.x=c.x-1;
+	it.y=c.y;
+	while (checkValid(it) && abs(board[it.x][it.y])<=1)
+		it.x--;
+	if (checkValid(it) && board[it.x][it.y]==ring_id)
+		retVal-=ring_id/board[it.x][it.y];
+
+	// moving right down
+	it.x=c.x+1;
+	it.y=c.y+1;
+	while (checkValid(it) && abs(board[it.x][it.y])<=1)
+	{	
+		it.x++;it.y++; 
+	}
+	if (checkValid(it) && board[it.x][it.y]==ring_id)
+		retVal-=ring_id/board[it.x][it.y];
+
+	// moving left up
+	it.x=c.x-1;
+	it.y=c.y-1;
+	while (checkValid(it) && abs(board[it.x][it.y])<=1)
+	{	
+		it.x--;it.y--; 
+	}
+	if (checkValid(it) && board[it.x][it.y]==ring_id)
+		retVal-=ring_id/board[it.x][it.y];
 	return retVal;
 }
 
