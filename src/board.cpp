@@ -4,8 +4,8 @@ double RING_WEIGHTS = 10000;
 double MARKER_WEIGHTS = 2;
 double BLOCKING_WEIGHT= 5;
 double WEIGHT_MARKERS_IN_LINE= -0.5;
-double NORMALIZE_WEIGHT = 0.5;
-double WEIGHT_TO_RING_IN_LINE = 7;
+double NORMALIZE_WEIGHT = 1;
+double WEIGHT_TO_RING_IN_LINE = 10;
 
 Board::Board(){
 
@@ -206,7 +206,7 @@ double Board::eval_func(int player_id){
 		return -hugeNumber;
 	}
 
-	double ring_weights = RING_WEIGHTS, marker_weights = MARKER_WEIGHTS, blocking_weight=BLOCKING_WEIGHT, weight_markers_in_line=WEIGHT_MARKERS_IN_LINE;
+	double ring_weights = RING_WEIGHTS, marker_weights = MARKER_WEIGHTS, blocking_weight=BLOCKING_WEIGHT;
 	double score;
 
 	int rings_blocked_by_white = 0, rings_blocked_by_black=0;
@@ -217,7 +217,7 @@ double Board::eval_func(int player_id){
 		rings_blocked_by_black+=blocked_rings(c);
 
 	
-	score = ring_weights*(white_rings_out-black_rings_out) + marker_weights*(white_markers-black_markers) + blocking_weight*(rings_blocked_by_white-rings_blocked_by_black) + this->eval_markers_in_row();
+	score = ring_weights*(white_rings_out-black_rings_out) + marker_weights*(white_markers-black_markers) + blocking_weight*(rings_blocked_by_white-rings_blocked_by_black) + NORMALIZE_WEIGHT*this->eval_markers_in_row();
 	
 	if (player_id==-1)
 		score+=ring_weights*white_rings_out;
@@ -903,7 +903,7 @@ vector<pair<Board*, string>> Board::possible_removeMarker_orders(Board* b){
 }
 
 double Board::eval_markers_in_row(){
-	double weight_to_ring=WEIGHT_TO_RING_IN_LINE,normalize_weight=NORMALIZE_WEIGHT;
+	double weight_to_ring=WEIGHT_TO_RING_IN_LINE;
 	double retVal=0;
 
 	coordinates start_coord,end_coord;
@@ -931,7 +931,7 @@ double Board::eval_markers_in_row(){
 				
 			}
 			// retVal - since white has negative turn id
-			retVal-=board[i][j]*counter;
+			retVal-=board[i][j]*counter*WEIGHT_MARKERS_IN_LINE;
 			if (checkValid(end_coord))
 				retVal-=board[i][k]*counter*weight_to_ring;
 
@@ -950,7 +950,7 @@ double Board::eval_markers_in_row(){
 				end_coord.y=--k;
 				
 			}
-			retVal-=board[i][j]*counter;
+			retVal-=board[i][j]*counter*WEIGHT_MARKERS_IN_LINE;
 			if (checkValid(end_coord))
 				retVal-=board[i][k]*counter*weight_to_ring;
 
@@ -968,7 +968,7 @@ double Board::eval_markers_in_row(){
 				end_coord.x=++k;
 				
 			}
-			retVal-=board[i][j]*counter;
+			retVal-=board[i][j]*counter*WEIGHT_MARKERS_IN_LINE;
 			if (checkValid(end_coord))
 				retVal-=board[k][i]*counter*weight_to_ring;
 
@@ -986,7 +986,7 @@ double Board::eval_markers_in_row(){
 				end_coord.x=--k;
 				
 			}
-			retVal-=board[i][j]*counter;
+			retVal-=board[i][j]*counter*WEIGHT_MARKERS_IN_LINE;
 			if (checkValid(end_coord))
 				retVal-=board[k][i]*counter*weight_to_ring;
 			
@@ -1006,7 +1006,7 @@ double Board::eval_markers_in_row(){
 				end_coord.y=++l;
 				
 			}
-			retVal-=board[i][j]*counter;
+			retVal-=board[i][j]*counter*WEIGHT_MARKERS_IN_LINE;
 			if (checkValid(end_coord))
 				retVal-=board[k][l]*counter*weight_to_ring;
 
@@ -1027,12 +1027,12 @@ double Board::eval_markers_in_row(){
 				end_coord.y=--l;
 				
 			}
-			retVal-=board[i][j]*counter;
+			retVal-=board[i][j]*counter*WEIGHT_MARKERS_IN_LINE;
 			if (checkValid(end_coord))
 				retVal-=board[k][l]*counter*weight_to_ring;
 
 		}
 	}
-	return retVal*normalize_weight;
+	return retVal;
 
 }
