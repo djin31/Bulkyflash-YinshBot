@@ -12,7 +12,10 @@ class Treenode{
 		vector<Treenode*> children;
 
 		Treenode();
+		~Treenode();
 
 		void generate_children();
+		void delete_children();
+		Treenode* copyNode();
 };
 #endif

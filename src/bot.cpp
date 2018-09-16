@@ -1,6 +1,7 @@
 #include "bot.h"
 
 int MAX_DEPTH=2;
+int SAVED_CHILDREN_CUTOFF = 3;
 int BOARD_SIZE=5;
 
 Bot::Bot(int player_id, double time_limit){
@@ -57,8 +58,12 @@ void Bot::minVal(Treenode* node, double alpha, double beta, int depth_left){
 	// for (Treenode* child:node->children)
 	// 	cerr<<child->value<<" ";
 	// cerr<<endl;
-	if (node->children.size()>0)
+	if (node->children.size()>0){
 		node->value = node->children.front()->value;
+		if(depth_left < SAVED_CHILDREN_CUTOFF)
+			node->delete_children();
+	}
+
 	else
 	{
 		cerr<<"NO MOVES TO PLAY\n";
@@ -101,8 +106,11 @@ void Bot::maxVal(Treenode* node, double alpha, double beta, int depth_left){
 	// for (Treenode* child:node->children)
 	// 	cerr<<child->value<<" ";
 	// cerr<<endl;
-	if (node->children.size()>0)
+	if (node->children.size()>0){
 		node->value = node->children.front()->value;
+		if(depth_left < SAVED_CHILDREN_CUTOFF)
+			node->delete_children();
+	}
 	else
 	{
 		cerr<<"NO MOVES TO PLAY\n";
@@ -260,22 +268,40 @@ void Bot::play(){
 		double time_tick=clock();
 		if (player_id==1)
 		{
-			minVal(root,INT_MIN, INT_MAX, MAX_DEPTH);
-			if (root->children.size()>0){
-				root = root->children.front();
-				// for verification
-
-				cout<<root->move_description<<endl;
+			Treenode* minNode;
+			double minValue = INT_MAX;
+			if(root->children.size() == 0)
+				root->generate_children();
+			for(int i = 0; i < root->children.size(); i++){
+				maxVal(root->children[i], INT_MIN, INT_MAX, MAX_DEPTH);
+				double value = root->children[i]->value;
+				if (value < minValue){
+					minValue = value;
+					minNode = root->children[i];
+				}
 			}
-			
+			//minNode = minNode->copyNode();
+			//delete root;
+			root = minNode;
+			cout << root->move_description<<endl;			
 		}
 		else{
-			maxVal(root,INT_MIN, INT_MAX, MAX_DEPTH);
-			if (root->children.size()>0){
-				root = root->children.front();
-
-				cout<<root->move_description<<endl;
+			Treenode* maxNode;
+			double maxValue = INT_MIN;
+			if(root->children.size() == 0)
+				root->generate_children();
+			for(int i = 0; i < root->children.size(); i++){
+				minVal(root->children[i], INT_MIN, INT_MAX, MAX_DEPTH);
+				double value = root->children[i]->value;
+				if (value > maxValue){
+					maxValue = value;
+					maxNode = root->children[i];
+				}
 			}
+			//maxNode = maxNode->copyNode();
+			//delete root;
+			root = maxNode;
+			cout << root->move_description<<endl;
 			
 		}
 		time_left -= ((double)(clock()-time_tick))/CLOCKS_PER_SEC;
