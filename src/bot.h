@@ -20,6 +20,7 @@ class Bot{
 
     void maxVal(Treenode* node, double alpha, double beta, int depth_left);
 
+    location best_place_ring();
     void place_ring();
 
     void play();

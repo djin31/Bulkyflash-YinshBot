@@ -76,7 +76,7 @@ class Board{
 
 		// gives the number of rings which are blocked
 		int blocked_rings(coordinates c);
-
+		int self_blocked_rings(coordinates c);
 		double eval_markers_in_row();
 
 		//get the valid moves on the current board
