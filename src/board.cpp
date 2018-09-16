@@ -219,7 +219,8 @@ double Board::eval_func(int player_id){
 	
 	score = ring_weights*(white_rings_out-black_rings_out) + marker_weights*(white_markers-black_markers) + blocking_weight*(rings_blocked_by_white-rings_blocked_by_black) + NORMALIZE_WEIGHT*this->eval_markers_in_row();
 	
-	if (player_id==-1)
+	//if (player_id==-1)
+	if (turn_id == -1)
 		score+=ring_weights*white_rings_out;
 	else
 		score-=ring_weights*black_rings_out;
@@ -905,7 +906,7 @@ vector<pair<Board*, string>> Board::possible_removeMarker_orders(Board* b){
 double Board::eval_markers_in_row(){
 	double weight_to_ring=WEIGHT_TO_RING_IN_LINE;
 	double retVal=0;
-
+	double counter_value[] = {1, 3, 9, 27, 81, 100, 150, 220, 310, 410, 550};
 	coordinates start_coord,end_coord;
 	
 	for (int i=0;i<2*board_size+1;i++){
@@ -931,9 +932,9 @@ double Board::eval_markers_in_row(){
 				
 			}
 			// retVal - since white has negative turn id
-			retVal-=board[i][j]*counter*WEIGHT_MARKERS_IN_LINE;
+			retVal-=board[i][j]*counter_value[counter]*WEIGHT_MARKERS_IN_LINE;
 			if (checkValid(end_coord))
-				retVal-=board[i][k]*counter*weight_to_ring;
+				retVal-=board[i][k]*counter_value[counter]*weight_to_ring;
 
 			// moving up
 			// cerr<<"check up"<<endl;
@@ -950,9 +951,9 @@ double Board::eval_markers_in_row(){
 				end_coord.y=--k;
 				
 			}
-			retVal-=board[i][j]*counter*WEIGHT_MARKERS_IN_LINE;
+			retVal-=board[i][j]*counter_value[counter]*WEIGHT_MARKERS_IN_LINE;
 			if (checkValid(end_coord))
-				retVal-=board[i][k]*counter*weight_to_ring;
+				retVal-=board[i][k]*counter_value[counter]*weight_to_ring;
 
 			// moving right sideways
 			// cerr<<"check right"<<endl;
@@ -968,9 +969,9 @@ double Board::eval_markers_in_row(){
 				end_coord.x=++k;
 				
 			}
-			retVal-=board[i][j]*counter*WEIGHT_MARKERS_IN_LINE;
+			retVal-=board[i][j]*counter_value[counter]*WEIGHT_MARKERS_IN_LINE;
 			if (checkValid(end_coord))
-				retVal-=board[k][i]*counter*weight_to_ring;
+				retVal-=board[k][i]*counter_value[counter]*weight_to_ring;
 
 			// moving left sideways
 			// cerr<<"check left"<<endl;
@@ -986,9 +987,9 @@ double Board::eval_markers_in_row(){
 				end_coord.x=--k;
 				
 			}
-			retVal-=board[i][j]*counter*WEIGHT_MARKERS_IN_LINE;
+			retVal-=board[i][j]*counter_value[counter]*WEIGHT_MARKERS_IN_LINE;
 			if (checkValid(end_coord))
-				retVal-=board[k][i]*counter*weight_to_ring;
+				retVal-=board[k][i]*counter_value[counter]*weight_to_ring;
 			
 			// moving diagonal right down
 			// cerr<<"check diagonal right"<<endl;
@@ -1006,9 +1007,9 @@ double Board::eval_markers_in_row(){
 				end_coord.y=++l;
 				
 			}
-			retVal-=board[i][j]*counter*WEIGHT_MARKERS_IN_LINE;
+			retVal-=board[i][j]*counter_value[counter]*WEIGHT_MARKERS_IN_LINE;
 			if (checkValid(end_coord))
-				retVal-=board[k][l]*counter*weight_to_ring;
+				retVal-=board[k][l]*counter_value[counter]*weight_to_ring;
 
 			// moving diagonal right down
 			// cerr<<"check diagonal leftt"<<endl;
@@ -1027,9 +1028,9 @@ double Board::eval_markers_in_row(){
 				end_coord.y=--l;
 				
 			}
-			retVal-=board[i][j]*counter*WEIGHT_MARKERS_IN_LINE;
+			retVal-=board[i][j]*counter_value[counter]*WEIGHT_MARKERS_IN_LINE;
 			if (checkValid(end_coord))
-				retVal-=board[k][l]*counter*weight_to_ring;
+				retVal-=board[k][l]*counter_value[counter]*weight_to_ring;
 
 		}
 	}

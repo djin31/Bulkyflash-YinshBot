@@ -1,6 +1,6 @@
 #include "bot.h"
 
-int MAX_DEPTH=3;
+int MAX_DEPTH=2;
 int BOARD_SIZE=5;
 
 Bot::Bot(int player_id, double time_limit){
