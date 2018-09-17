@@ -1,6 +1,6 @@
 #include "bot.h"
 
-int MAX_DEPTH=2;
+int MAX_DEPTH=1;
 int SAVED_CHILDREN_CUTOFF = 2;
 int BOARD_SIZE=5;
 
@@ -28,29 +28,21 @@ bool rev_node_compare(Treenode* a, Treenode* b)
 }
 
 void Bot::minVal(Treenode* node, double alpha, double beta, int depth_left){
-	if (depth_left==0||node->board->check_terminal())
-	{
+	if (depth_left==0||node->board->check_terminal()){
 		node->value = node->board->eval_func(player_id);
 		return;
 	}
-	if (node->children.size()==0)
-	{
+	if (node->children.size()==0){
 		node->generate_children();
 	}
-	int children_seen=0;
-	for (int child=0; child< node->children.size();child++)
-	{
-		children_seen=child;
+	for (int child=0; child < node->children.size(); child++){
 		maxVal(node->children[child],alpha,beta,depth_left-1);
 		beta =  min(beta,node->children[child]->value);
-
-		// if (alpha>=beta) 
-		// {
-		// 	node->value = child->value;
-		// 	// cerr<<"PRUNED AT VALUE "<<child->value<<endl;
-		// 	// break;
-		// }
-
+		if (alpha>=beta){
+		 	node->value = node->children[child]->value;
+		 	//cerr<<"PRUNED AT VALUE "<<child->value<<endl;
+			return;
+		}
 	}
 	sort(node->children.begin(),node->children.end(), node_compare);
 
@@ -72,45 +64,33 @@ void Bot::minVal(Treenode* node, double alpha, double beta, int depth_left){
 
 void Bot::maxVal(Treenode* node, double alpha, double beta, int depth_left){
 	
-	if (depth_left==0||node->board->check_terminal())
-	{
+	if (depth_left==0||node->board->check_terminal()){
 		node->value = node->board->eval_func(player_id);
 		return;
 	}
-
-	if (node->children.size()==0)
-	{
+	if (node->children.size()==0){
 		node->generate_children();
 	}
+	for (int child=0; child < node->children.size(); child++){
 
-	int children_seen=0;
-	for (int child=0; child< node->children.size();child++)
-	{
 		minVal(node->children[child],alpha,beta, depth_left-1);
 		alpha =  max(alpha,node->children[child]->value);
-
-		// if (alpha>=beta) 
-		// {
-		// 	node->value = child->value;
-		// 	// cerr<<"PRUNED AT VALUE "<<child->value<<endl;
-		// 	// break;
-		// }
-
+		if (alpha>=beta){
+			node->value = node->children[child]->value;
+		 	//cerr<<"PRUNED AT VALUE "<<child->value<<endl;
+		 	return;
+		}
 	}
 	sort(node->children.begin(),node->children.end(), rev_node_compare);
-
 	if (node->children.size()>0){
 		node->value = node->children.front()->value;
-		if(depth_left < SAVED_CHILDREN_CUTOFF)
-			node->delete_children();
+		//if(depth_left < SAVED_CHILDREN_CUTOFF)
+		//	node->delete_children();
 	}
-	else
-	{
+	else{
 		cerr<<"NO MOVES TO PLAY\n";
 		while(1)
-		{
 			cerr<<"NO MOVES TO PLAY\n";
-		}
 	}
 }
 
@@ -213,8 +193,8 @@ void Bot::play(){
 		MAX_MOVES--;
 
 		double time_tick=clock();
-		if (player_id==1)
-		{
+		
+		if (player_id==1){
 			Treenode* minNode;
 			double minValue = INT_MAX;
 			if(root->children.size() == 0)
