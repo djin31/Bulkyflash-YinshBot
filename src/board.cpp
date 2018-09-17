@@ -444,7 +444,7 @@ vector<pair<Board*, string>> Board::get_valid_moves(){
 	return boards_after_moveRing_removeMarker;
 }
 
-/*vector<string> Board::get_valid_actions(){
+vector<string> Board::get_valid_actions(){
 	vector<string> possible_orders;
 	vector<string> boards_after_removeMarker = possible_removeMarker_actions(this);
 	vector<string> boards_after_moveRing;
@@ -455,39 +455,40 @@ vector<pair<Board*, string>> Board::get_valid_moves(){
 		boards_after_moveRing = possible_moveRing_actions(this, "");
 	else{
 		for(int i = 0; i < boards_after_removeMarker.size(); i++){
-			if(!(boards_after_removeMarker[i].first->white_rings_out >= rings_to_remove || boards_after_removeMarker[i].first->black_rings_out >= rings_to_remove)){
-				vector<pair<Board*, string>> v = possible_moveRing_orders(boards_after_removeMarker[i].first, boards_after_removeMarker[i].second);
+			Board* temp_board_after_removeMarker = this->copy_board();
+			temp_board_after_removeMarker->execute_move(boards_after_removeMarker[i]);
+			if(!(temp_board_after_removeMarker->white_rings_out >= rings_to_remove || temp_board_after_removeMarker->black_rings_out >= rings_to_remove)){
+				vector<string> v = possible_moveRing_actions(temp_board_after_removeMarker, boards_after_removeMarker[i]);
 				boards_after_moveRing.insert(boards_after_moveRing.end(), v.begin(), v.end());
 			}
 			else{
 				boards_after_moveRing.push_back(boards_after_removeMarker[i]);	
 			}
+			delete temp_board_after_removeMarker;
 		}
 	}
 
 	//checking for five markers in a row after moveRing
 	for(int i = 0; i < boards_after_moveRing.size(); i++){
-		boards_after_moveRing[i].first->turn_id *= -1;
-		vector<pair<Board*, string>> v; 
-		if(!(boards_after_moveRing[i].first->white_rings_out >= rings_to_remove || boards_after_moveRing[i].first->black_rings_out >= rings_to_remove))
-			v = possible_removeMarker_orders(boards_after_moveRing[i].first);
+		Board* temp_board_after_moveRing = this->copy_board();
+		temp_board_after_moveRing->execute_move(boards_after_moveRing[i]);
+		temp_board_after_moveRing->turn_id *= -1;
+		vector<string> v; 
+		if(!(temp_board_after_moveRing->white_rings_out >= rings_to_remove || temp_board_after_moveRing->black_rings_out >= rings_to_remove))
+			v = possible_removeMarker_actions(temp_board_after_moveRing);
 		if(v.size() == 0){
-			boards_after_moveRing[i].first->turn_id*=-1;
 			boards_after_moveRing_removeMarker.push_back(boards_after_moveRing[i]);
 		}
 		else{
-			//cerr<<(boards_after_moveRing[i].second + v[0].second)<<"     INSIDE REMOVE MARKER\n";
-			
 			for(int j = 0; j < v.size(); j++){
-
-				pair<Board*, string> p = make_pair(v[j].first, boards_after_moveRing[i].second + v[j].second);
-				p.first->turn_id*=-1;
+				string p = boards_after_moveRing[i] + v[j];
 				boards_after_moveRing_removeMarker.push_back(p);
 			}
 		}
+		delete temp_board_after_moveRing;
 	}
 	return boards_after_moveRing_removeMarker;
-}*/
+}
 
 vector<pair<Board*, string>> Board::possible_moveRing_orders(Board* b, string removeMarker_string){		//does not give children when all the rings have not been placed // use only for move ring and remove ring
 	std::vector<pair<Board*, string>> children;

@@ -84,7 +84,7 @@ class Board{
 
 		//get the valid moves on the current board
 		vector<pair<Board*, string>> get_valid_moves();		//does not give children when all the rings have not been placed // use only for move ring and remove ring
-		//vector<string> get_valid_actions();
+		vector<string> get_valid_actions();
 
 		//check if L rings have been removed
 		bool check_terminal();
