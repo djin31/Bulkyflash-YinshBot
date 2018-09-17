@@ -36,7 +36,6 @@ void Bot::minVal(Treenode* node, double alpha, double beta, int depth_left){
 	if (node->children.size()==0)
 	{
 		node->generate_children();
-		//cerr<<"MINVAL GENERATED CHILDREN "<<node->children.size()<<endl;
 	}
 	int children_seen=0;
 	for (int child=0; child< node->children.size();child++)
@@ -54,10 +53,7 @@ void Bot::minVal(Treenode* node, double alpha, double beta, int depth_left){
 
 	}
 	sort(node->children.begin(),node->children.end(), node_compare);
-	// cerr<<"CHILDREN VALUES\n";
-	// for (Treenode* child:node->children)
-	// 	cerr<<child->value<<" ";
-	// cerr<<endl;
+
 	if (node->children.size()>0){
 		node->value = node->children.front()->value;
 		if(depth_left < SAVED_CHILDREN_CUTOFF)
@@ -102,10 +98,7 @@ void Bot::maxVal(Treenode* node, double alpha, double beta, int depth_left){
 
 	}
 	sort(node->children.begin(),node->children.end(), rev_node_compare);
-	// cerr<<"CHILDREN VALUES\n";
-	// for (Treenode* child:node->children)
-	// 	cerr<<child->value<<" ";
-	// cerr<<endl;
+
 	if (node->children.size()>0){
 		node->value = node->children.front()->value;
 		if(depth_left < SAVED_CHILDREN_CUTOFF)
@@ -129,7 +122,8 @@ void Bot::read_move(){
 	spaced_move = move + " ";	
 	for (Treenode* child: root->children){
 		if (child->move_description==move||child->move_description==spaced_move){
-			root = child;return;
+			root = child;
+			return;
 		}
 	}
 	cerr<<"OPPONENT'S MOVE NOT FOUND AMONGST CHILDREN\n";
@@ -140,53 +134,6 @@ void Bot::read_move(){
 	time_left -= ((double)(clock()-time_tick))/CLOCKS_PER_SEC;
 	
 }
-
-// random init
-// void Bot::place_ring(){
-// 	string move;
-	
-// 	if (player_id==1)
-// 	{
-// 		getline(cin,move);
-
-// 		root->board->execute_move(move);
-// 	}
-
-// 	int rings_placed=0;
-// 	int rings_to_be_placed=5;
-// 	location l;
-// 	coordinates c;
-// 	while(rings_placed<rings_to_be_placed){
-// 		double time_tick = clock();
-// 		rings_placed++;
-// 		l.hexagon=rand()%(BOARD_SIZE+1);
-// 		if (l.hexagon==0)
-// 			l.position=0;
-// 		else
-// 			l.position=rand()%(6*l.hexagon);
-		
-// 		c=root->board->location_to_coordinates(l);
-// 		while (!(root->board->checkValid(c) && root->board->board[c.x][c.y]==0))
-// 		{
-// 			l.hexagon=rand()%(BOARD_SIZE+1);
-// 			if (l.hexagon==0)
-// 				l.position=0;
-// 			else
-// 				l.position=rand()%(6*l.hexagon);
-			
-// 			c=root->board->location_to_coordinates(l);
-// 		}
-// 		move = "P " + to_string(l.hexagon) + " " + to_string(l.position);
-
-// 		root->board->execute_move(move);
-// 		cout<<move<<endl;
-// 		// root->board->printBoard();
-// 		time_left -= ((double)(clock()-time_tick))/CLOCKS_PER_SEC;
-// 		getline(cin,move);
-		
-// 		root->board->execute_move(move);
-// 	}
-// }
 
 location Bot::best_place_ring(){
 	coordinates best_coord, c;

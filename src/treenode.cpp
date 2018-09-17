@@ -34,5 +34,7 @@ Treenode* Treenode::copyNode(){
 	Treenode *newNode;
 	newNode->board = this->board->copy_board();
 	newNode->move_description = this->move_description;
+	newNode->value = this->value;
+	newNode->children = this->children;
 	return newNode;
 }
