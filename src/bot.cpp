@@ -1,7 +1,7 @@
 #include "bot.h"
 
-int MAX_DEPTH=1;
-int SAVED_CHILDREN_CUTOFF = 2;
+int MAX_DEPTH=2;
+int SAVED_CHILDREN_CUTOFF = 3;
 int BOARD_SIZE=5;
 
 Bot::Bot(int player_id, double time_limit){
@@ -84,8 +84,8 @@ void Bot::maxVal(Treenode* node, double alpha, double beta, int depth_left){
 	sort(node->children.begin(),node->children.end(), rev_node_compare);
 	if (node->children.size()>0){
 		node->value = node->children.front()->value;
-		//if(depth_left < SAVED_CHILDREN_CUTOFF)
-		//	node->delete_children();
+		if(depth_left < SAVED_CHILDREN_CUTOFF)
+			node->delete_children();
 	}
 	else{
 		cerr<<"NO MOVES TO PLAY\n";
