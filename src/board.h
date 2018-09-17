@@ -51,6 +51,7 @@ class Board{
 		coordinates location_to_coordinates(location l);
 		location coordinates_to_location(coordinates c);
 		std::pair<Board*, string> moveRing_to_pair(Board *b, coordinates start, coordinates end, string removeMarker_string);
+		string moveRing_to_string(coordinates start, coordinates end, string removeMarker_string);
 
 		// ring_no : black ring << 2, white ring << -2
 		// These function do not check the validity of the move, they can only tell if the location is outside the board
@@ -65,7 +66,7 @@ class Board{
 		vector<pair<Board*, string>> possible_removeMarker_orders(Board* b);
 		vector<pair<Board*, string>> possible_moveRing_orders(Board* b, string removeMarker_string);
 		vector<string> possible_removeMarker_actions(Board* b);
-		//vector<string> possible_moveRing_actions(Board* b, string removeMarker_string);
+		vector<string> possible_moveRing_actions(Board* b, string removeMarker_string);
 		bool checkValid(coordinates c);
 	//=========== use ony these functions publically===========
 		Board();
