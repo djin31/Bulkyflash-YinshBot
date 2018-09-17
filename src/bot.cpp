@@ -1,7 +1,7 @@
 #include "bot.h"
 
 int MAX_DEPTH=2;
-int SAVED_CHILDREN_CUTOFF = 3;
+int SAVED_CHILDREN_CUTOFF = 2;
 int BOARD_SIZE=5;
 
 Bot::Bot(int player_id, double time_limit){

@@ -362,7 +362,7 @@ int Board::self_blocked_rings(coordinates c){
 void Board::execute_move(string s){
 	std::vector<std::string> tokens = split(s, ' ');
 	int i = 0;
-	cerr<<"EXECUTE MOVE "<<tokens.size()<<endl;
+	//cerr<<"EXECUTE MOVE "<<tokens.size()<<endl;
 	while(i < tokens.size()){
 		if(tokens[i].compare("P") == 0){
 			location l;
