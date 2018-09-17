@@ -444,6 +444,51 @@ vector<pair<Board*, string>> Board::get_valid_moves(){
 	return boards_after_moveRing_removeMarker;
 }
 
+/*vector<string> Board::get_valid_actions(){
+	vector<string> possible_orders;
+	vector<string> boards_after_removeMarker = possible_removeMarker_actions(this);
+	vector<string> boards_after_moveRing;
+	vector<string> boards_after_moveRing_removeMarker;
+	
+	//moving ring
+	if (boards_after_removeMarker.size() == 0)
+		boards_after_moveRing = possible_moveRing_actions(this, "");
+	else{
+		for(int i = 0; i < boards_after_removeMarker.size(); i++){
+			if(!(boards_after_removeMarker[i].first->white_rings_out >= rings_to_remove || boards_after_removeMarker[i].first->black_rings_out >= rings_to_remove)){
+				vector<pair<Board*, string>> v = possible_moveRing_orders(boards_after_removeMarker[i].first, boards_after_removeMarker[i].second);
+				boards_after_moveRing.insert(boards_after_moveRing.end(), v.begin(), v.end());
+			}
+			else{
+				boards_after_moveRing.push_back(boards_after_removeMarker[i]);	
+			}
+		}
+	}
+
+	//checking for five markers in a row after moveRing
+	for(int i = 0; i < boards_after_moveRing.size(); i++){
+		boards_after_moveRing[i].first->turn_id *= -1;
+		vector<pair<Board*, string>> v; 
+		if(!(boards_after_moveRing[i].first->white_rings_out >= rings_to_remove || boards_after_moveRing[i].first->black_rings_out >= rings_to_remove))
+			v = possible_removeMarker_orders(boards_after_moveRing[i].first);
+		if(v.size() == 0){
+			boards_after_moveRing[i].first->turn_id*=-1;
+			boards_after_moveRing_removeMarker.push_back(boards_after_moveRing[i]);
+		}
+		else{
+			//cerr<<(boards_after_moveRing[i].second + v[0].second)<<"     INSIDE REMOVE MARKER\n";
+			
+			for(int j = 0; j < v.size(); j++){
+
+				pair<Board*, string> p = make_pair(v[j].first, boards_after_moveRing[i].second + v[j].second);
+				p.first->turn_id*=-1;
+				boards_after_moveRing_removeMarker.push_back(p);
+			}
+		}
+	}
+	return boards_after_moveRing_removeMarker;
+}*/
+
 vector<pair<Board*, string>> Board::possible_moveRing_orders(Board* b, string removeMarker_string){		//does not give children when all the rings have not been placed // use only for move ring and remove ring
 	std::vector<pair<Board*, string>> children;
 	string s = "";
@@ -582,6 +627,136 @@ vector<pair<Board*, string>> Board::possible_moveRing_orders(Board* b, string re
 		}
 	}
 	return children;
+}
+
+vector<pair<Board*, string>> Board::possible_removeMarker_orders(Board* b){
+	vector<pair<Board*, string>> possible_orders;
+	vector<pair<coordinates, coordinates>> fiveMarkerSeq = b->get_markers_in_a_row();
+	for(int i = 0; i < fiveMarkerSeq.size(); i++){
+		Board *newBoard = b->copy_board();
+		pair<coordinates, coordinates> p = fiveMarkerSeq[i];
+		location initial = coordinates_to_location(p.first);
+		location final = coordinates_to_location(p.second);
+		newBoard->removeMarkerSeq(p.first, p.second);
+		string s = "";
+		s += "RS " + to_string(initial.hexagon) + " " + to_string(initial.position) + " ";
+		s += "RE " + to_string(final.hexagon) + " " + to_string(final.position) + " ";
+
+		//remove ring
+		coordinates ring;
+		if(newBoard->turn_id == 1){
+			for(int j = 0; j < newBoard->black_rings.size(); j++){
+				ring = newBoard->black_rings[j];
+				Board* tempNewBoard = newBoard->copy_board();
+				tempNewBoard->removeRing(ring);
+				location ring_l = coordinates_to_location(ring);
+				string s1 = s + "X " + to_string(ring_l.hexagon) + " " + to_string(ring_l.position) + " ";
+
+				vector<pair<Board*, string>> more_possibilities;
+				if(!(tempNewBoard->white_rings_out >= rings_to_remove || tempNewBoard->black_rings_out >= rings_to_remove))
+					more_possibilities = possible_removeMarker_orders(tempNewBoard);
+				if(more_possibilities.size() == 0)
+					possible_orders.push_back(make_pair(tempNewBoard, s1));
+				else{
+					delete tempNewBoard;
+					for(int k = 0; k < more_possibilities.size(); k++){
+						string s2 = s1 + more_possibilities[k].second;
+						possible_orders.push_back(make_pair(more_possibilities[k].first, s2));
+					}
+				}
+			}
+			delete newBoard;
+		}
+		else{
+			for(int j = 0; j < newBoard->white_rings.size(); j++){
+				ring = newBoard->white_rings[j];
+				Board* tempNewBoard = newBoard->copy_board();
+				tempNewBoard->removeRing(ring);
+				location ring_l = coordinates_to_location(ring);
+				string s1 = s + "X " + to_string(ring_l.hexagon) + " " + to_string(ring_l.position) + " ";
+
+				vector<pair<Board*, string>> more_possibilities;
+				if(!(tempNewBoard->white_rings_out >= rings_to_remove || tempNewBoard->black_rings_out >= rings_to_remove))
+					more_possibilities = possible_removeMarker_orders(tempNewBoard);
+				if(more_possibilities.size() == 0)
+					possible_orders.push_back(make_pair(tempNewBoard, s1));
+				else{
+					delete tempNewBoard;
+					for(int k = 0; k < more_possibilities.size(); k++){
+						string s2 = s1 + more_possibilities[k].second;
+						possible_orders.push_back(make_pair(more_possibilities[k].first, s2));
+					}
+				}
+			}
+			delete newBoard;
+		}
+		
+	}
+	return possible_orders;
+}
+
+vector<string> Board::possible_removeMarker_actions(Board* b){
+	vector<string> possible_orders;
+	vector<pair<coordinates, coordinates>> fiveMarkerSeq = b->get_markers_in_a_row();
+	for(int i = 0; i < fiveMarkerSeq.size(); i++){
+		Board *newBoard = b->copy_board();
+		pair<coordinates, coordinates> p = fiveMarkerSeq[i];
+		location initial = coordinates_to_location(p.first);
+		location final = coordinates_to_location(p.second);
+		newBoard->removeMarkerSeq(p.first, p.second);
+		string s = "";
+		s += "RS " + to_string(initial.hexagon) + " " + to_string(initial.position) + " ";
+		s += "RE " + to_string(final.hexagon) + " " + to_string(final.position) + " ";
+
+		//remove ring
+		coordinates ring;
+		if(newBoard->turn_id == 1){
+			for(int j = 0; j < newBoard->black_rings.size(); j++){
+				ring = newBoard->black_rings[j];
+				Board* tempNewBoard = newBoard->copy_board();
+				tempNewBoard->removeRing(ring);
+				location ring_l = coordinates_to_location(ring);
+				string s1 = s + "X " + to_string(ring_l.hexagon) + " " + to_string(ring_l.position) + " ";
+
+				vector<string> more_possibilities;
+				if(!(tempNewBoard->white_rings_out >= rings_to_remove || tempNewBoard->black_rings_out >= rings_to_remove))
+					more_possibilities = possible_removeMarker_actions(tempNewBoard);
+				if(more_possibilities.size() == 0)
+					possible_orders.push_back(s1);
+				else{
+					for(int k = 0; k < more_possibilities.size(); k++){
+						string s2 = s1 + more_possibilities[k];
+						possible_orders.push_back(s2);
+					}
+				}
+				delete tempNewBoard;
+			}
+		}
+		else{
+			for(int j = 0; j < newBoard->white_rings.size(); j++){
+				ring = newBoard->white_rings[j];
+				Board* tempNewBoard = newBoard->copy_board();
+				tempNewBoard->removeRing(ring);
+				location ring_l = coordinates_to_location(ring);
+				string s1 = s + "X " + to_string(ring_l.hexagon) + " " + to_string(ring_l.position) + " ";
+
+				vector<string> more_possibilities;
+				if(!(tempNewBoard->white_rings_out >= rings_to_remove || tempNewBoard->black_rings_out >= rings_to_remove))
+					more_possibilities = possible_removeMarker_actions(tempNewBoard);
+				if(more_possibilities.size() == 0)
+					possible_orders.push_back(s1);
+				else{
+					for(int k = 0; k < more_possibilities.size(); k++){
+						string s2 = s1 + more_possibilities[k];
+						possible_orders.push_back(s2);
+					}
+				}
+				delete tempNewBoard;
+			}
+		}
+		delete newBoard;
+	}
+	return possible_orders;
 }
 
 bool Board::check_terminal(){
@@ -895,72 +1070,6 @@ std::pair<Board*, string> Board::moveRing_to_pair(Board* b, coordinates start, c
 	//newBoard->printBoard();
 	pair<Board*, string> p=make_pair(newBoard, s);
 	return p;
-}
-
-vector<pair<Board*, string>> Board::possible_removeMarker_orders(Board* b){
-	vector<pair<Board*, string>> possible_orders;
-	vector<pair<coordinates, coordinates>> fiveMarkerSeq = b->get_markers_in_a_row();
-	for(int i = 0; i < fiveMarkerSeq.size(); i++){
-		Board *newBoard = b->copy_board();
-		pair<coordinates, coordinates> p = fiveMarkerSeq[i];
-		location initial = coordinates_to_location(p.first);
-		location final = coordinates_to_location(p.second);
-		newBoard->removeMarkerSeq(p.first, p.second);
-		string s = "";
-		s += "RS " + to_string(initial.hexagon) + " " + to_string(initial.position) + " ";
-		s += "RE " + to_string(final.hexagon) + " " + to_string(final.position) + " ";
-
-		//remove ring
-		coordinates ring;
-		if(newBoard->turn_id == 1){
-			for(int j = 0; j < newBoard->black_rings.size(); j++){
-				ring = newBoard->black_rings[j];
-				Board* tempNewBoard = newBoard->copy_board();
-				tempNewBoard->removeRing(ring);
-				location ring_l = coordinates_to_location(ring);
-				string s1 = s + "X " + to_string(ring_l.hexagon) + " " + to_string(ring_l.position) + " ";
-
-				vector<pair<Board*, string>> more_possibilities;
-				if(!(tempNewBoard->white_rings_out >= rings_to_remove || tempNewBoard->black_rings_out >= rings_to_remove))
-					more_possibilities = possible_removeMarker_orders(tempNewBoard);
-				if(more_possibilities.size() == 0)
-					possible_orders.push_back(make_pair(tempNewBoard, s1));
-				else{
-					delete tempNewBoard;
-					for(int k = 0; k < more_possibilities.size(); k++){
-						string s2 = s1 + more_possibilities[k].second;
-						possible_orders.push_back(make_pair(more_possibilities[k].first, s2));
-					}
-				}
-			}
-			delete newBoard;
-		}
-		else{
-			for(int j = 0; j < newBoard->white_rings.size(); j++){
-				ring = newBoard->white_rings[j];
-				Board* tempNewBoard = newBoard->copy_board();
-				tempNewBoard->removeRing(ring);
-				location ring_l = coordinates_to_location(ring);
-				string s1 = s + "X " + to_string(ring_l.hexagon) + " " + to_string(ring_l.position) + " ";
-
-				vector<pair<Board*, string>> more_possibilities;
-				if(!(tempNewBoard->white_rings_out >= rings_to_remove || tempNewBoard->black_rings_out >= rings_to_remove))
-					more_possibilities = possible_removeMarker_orders(tempNewBoard);
-				if(more_possibilities.size() == 0)
-					possible_orders.push_back(make_pair(tempNewBoard, s1));
-				else{
-					delete tempNewBoard;
-					for(int k = 0; k < more_possibilities.size(); k++){
-						string s2 = s1 + more_possibilities[k].second;
-						possible_orders.push_back(make_pair(more_possibilities[k].first, s2));
-					}
-				}
-			}
-			delete newBoard;
-		}
-		
-	}
-	return possible_orders;
 }
 
 double Board::eval_markers_in_row(){
