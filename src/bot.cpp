@@ -141,7 +141,7 @@ location Bot::best_place_ring(){
 				continue;
 			randomising_seed=double(rand())/RAND_MAX;
 			newBoard->board[c.x][c.y]=2*player_id;
-			block = 0*newBoard->blocked_rings(c) + 2*newBoard->self_blocked_rings(c);
+			block = newBoard->blocked_rings(c) + 2*newBoard->self_blocked_rings(c);
 			if ((block>max_block && randomising_seed>0.5) || (block==max_block && randomising_seed>0.8)){
 				max_block=block;
 				best_coord.x=c.x;
