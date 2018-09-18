@@ -1,6 +1,9 @@
 #include "bot.h"
 
-int MAX_DEPTH=2;
+int MAX_DEPTH;
+int CHILDREN_THRESHOLD=35;
+int DEEP_MAX_DEPTH=3;
+int SHALLOW_MAX_DEPTH=2;
 int SAVED_CHILDREN_CUTOFF = 3;
 int BOARD_SIZE=5;
 
@@ -35,19 +38,22 @@ void Bot::minVal(Treenode* node, double alpha, double beta, int depth_left){
 	if (node->children.size()==0){
 		node->generate_children();
 	}
+	double minValue = INT_MAX;
 	for (int child=0; child < node->children.size(); child++){
 		maxVal(node->children[child],alpha,beta,depth_left-1);
 		beta =  min(beta,node->children[child]->value);
+
 		if (alpha>=beta){
 		 	node->value = node->children[child]->value;
 		 	//cerr<<"PRUNED AT VALUE "<<child->value<<endl;
 			return;
 		}
-	}
-	sort(node->children.begin(),node->children.end(), node_compare);
 
+		minValue = min(minValue,node->children[child]->value);
+		
+	}
+	node->value=minValue;
 	if (node->children.size()>0){
-		node->value = node->children.front()->value;
 		if(depth_left < SAVED_CHILDREN_CUTOFF)
 			node->delete_children();
 	}
@@ -71,6 +77,8 @@ void Bot::maxVal(Treenode* node, double alpha, double beta, int depth_left){
 	if (node->children.size()==0){
 		node->generate_children();
 	}
+
+	double maxValue = INT_MIN;
 	for (int child=0; child < node->children.size(); child++){
 
 		minVal(node->children[child],alpha,beta, depth_left-1);
@@ -80,10 +88,12 @@ void Bot::maxVal(Treenode* node, double alpha, double beta, int depth_left){
 		 	//cerr<<"PRUNED AT VALUE "<<child->value<<endl;
 		 	return;
 		}
+
+		maxValue = max(maxValue,node->children[child]->value);
 	}
-	sort(node->children.begin(),node->children.end(), rev_node_compare);
+	node->value = maxValue;
+
 	if (node->children.size()>0){
-		node->value = node->children.front()->value;
 		if(depth_left < SAVED_CHILDREN_CUTOFF)
 			node->delete_children();
 	}
@@ -106,7 +116,7 @@ void Bot::read_move(){
 			return;
 		}
 	}
-	cerr<<"OPPONENT'S MOVE NOT FOUND AMONGST CHILDREN\n";
+	
 	// should generate the new config and remake tree
 	root->board->execute_move(move);
 	root->children.clear();
@@ -131,17 +141,33 @@ location Bot::best_place_ring(){
 				continue;
 			randomising_seed=double(rand())/RAND_MAX;
 			newBoard->board[c.x][c.y]=2*player_id;
-			block = newBoard->blocked_rings(c) + 2*newBoard->self_blocked_rings(c);
-			if (block>max_block && randomising_seed>0.5){
+			block = 0*newBoard->blocked_rings(c) + 2*newBoard->self_blocked_rings(c);
+			if ((block>max_block && randomising_seed>0.5) || (block==max_block && randomising_seed>0.8)){
 				max_block=block;
 				best_coord.x=c.x;
 				best_coord.y=c.y;
 			}
 			newBoard->board[c.x][c.y]=0;
-			
-			
 		}
 	}
+
+	l.hexagon=BOARD_SIZE;
+	for (int j=0;j<6*BOARD_SIZE;j++){
+		l.position=j;
+		c = root->board->location_to_coordinates(l);
+		if (root->board->board[c.x][c.y]!=0)
+			continue;
+		randomising_seed=double(rand())/RAND_MAX;
+		newBoard->board[c.x][c.y]=2*player_id;
+		block = newBoard->blocked_rings(c) + 2*newBoard->self_blocked_rings(c);
+		if (block>=max_block && randomising_seed>0.5){
+			max_block=block;
+			best_coord.x=c.x;
+			best_coord.y=c.y;
+		}
+		newBoard->board[c.x][c.y]=0;
+	}
+	delete newBoard;
 	best_location = root->board->coordinates_to_location(best_coord);
 	return best_location;
 
@@ -199,6 +225,12 @@ void Bot::play(){
 			double minValue = INT_MAX;
 			if(root->children.size() == 0)
 				root->generate_children();
+			if (root->children.size()>CHILDREN_THRESHOLD)
+				MAX_DEPTH = SHALLOW_MAX_DEPTH;
+			else
+				MAX_DEPTH = DEEP_MAX_DEPTH;
+			if (time_left<20)
+				MAX_DEPTH=SHALLOW_MAX_DEPTH;
 			for(int i = 0; i < root->children.size(); i++){
 				maxVal(root->children[i], INT_MIN, INT_MAX, MAX_DEPTH);
 				double value = root->children[i]->value;
@@ -217,6 +249,12 @@ void Bot::play(){
 			double maxValue = INT_MIN;
 			if(root->children.size() == 0)
 				root->generate_children();
+			if (root->children.size()>CHILDREN_THRESHOLD)
+				MAX_DEPTH = SHALLOW_MAX_DEPTH;
+			else
+				MAX_DEPTH = DEEP_MAX_DEPTH;
+			if (time_left<20)
+				MAX_DEPTH=SHALLOW_MAX_DEPTH;
 			for(int i = 0; i < root->children.size(); i++){
 				minVal(root->children[i], INT_MIN, INT_MAX, MAX_DEPTH);
 				double value = root->children[i]->value;
@@ -234,9 +272,6 @@ void Bot::play(){
 		time_left -= ((double)(clock()-time_tick))/CLOCKS_PER_SEC;
 		
 		read_move();
-
-		if (time_left<10)
-			MAX_DEPTH=2;
 
 	}
 	
