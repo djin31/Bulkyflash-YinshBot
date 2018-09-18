@@ -196,15 +196,12 @@ void Board::execute_move_remove_row_ring(location start, location end, location 
 }
 
 double Board::eval_func(int player_id){
-	double hugeNumber = 100000;
+	double hugeNumber = 1000000;
 
-	// if terminal return large number
-	if ((turn_id==-1 && white_rings_out>=rings_to_remove)||(turn_id==1 && black_rings_out>=rings_to_remove)){
+	if (white_rings_out>=rings_to_remove)
 		return hugeNumber;
-	}
-	if ((turn_id==1 && white_rings_out>=rings_to_remove)||(turn_id==-1 && black_rings_out>=rings_to_remove)){
+	else if (black_rings_out>=rings_to_remove)
 		return -hugeNumber;
-	}
 
 	double ring_weights = RING_WEIGHTS, marker_weights = MARKER_WEIGHTS, blocking_weight=BLOCKING_WEIGHT;
 	double score;
@@ -218,9 +215,8 @@ double Board::eval_func(int player_id){
 
 	
 	score = ring_weights*(white_rings_out-black_rings_out) + marker_weights*(white_markers-black_markers) + blocking_weight*(rings_blocked_by_white-rings_blocked_by_black) + NORMALIZE_WEIGHT*this->eval_markers_in_row();
-	
-	//if (player_id==-1)
-	if (turn_id == -1)
+	//score+= controlled_markers_in_row();
+	if (player_id==-1)
 		score+=ring_weights*white_rings_out;
 	else
 		score-=ring_weights*black_rings_out;
