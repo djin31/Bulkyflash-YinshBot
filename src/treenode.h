@@ -10,11 +10,13 @@ class Treenode{
 		string move_description;
 		double value;
 		vector<Treenode*> children;
+		//vector<string> children_strings;
 
 		Treenode();
 		~Treenode();
 
 		void generate_children();
+		//void generate_children_strings();
 		void delete_children();
 		Treenode* copyNode();
 };

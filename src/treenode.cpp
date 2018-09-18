@@ -22,6 +22,10 @@ void Treenode::generate_children(){
 	}
 }
 
+/*void Treenode::generate_children_strings(){
+	children_strings = board->get_valid_actions();
+}*/
+
 void Treenode::delete_children(){
 	for (int i=0; i < children.size(); i++)
 	{
@@ -34,5 +38,7 @@ Treenode* Treenode::copyNode(){
 	Treenode *newNode;
 	newNode->board = this->board->copy_board();
 	newNode->move_description = this->move_description;
+	newNode->value = this->value;
+	newNode->children = this->children;
 	return newNode;
 }
