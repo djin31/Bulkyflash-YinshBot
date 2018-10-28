@@ -25,10 +25,6 @@ struct coordinates
 	int y;	//line 60* to the horizontal (CCW)
 };
 
-const int board_size=5;			// N
-const int given_rings=5;		// M
-const int rings_to_remove=3;	// L
-const int markers_in_line=5;	// K
 
 class Board{
 	public:
@@ -94,6 +90,15 @@ class Board{
 
 		//function to print the board
 		void printBoard();
+		
+		
+	static int board_size;			// N
+	static int given_rings;		// M
+	static int rings_to_remove;	// L
+	static int markers_in_line;	// K
+
+	static void set_board_params(int board_size_in, int given_rings_in, int rings_to_remove_in, int markers_in_line_in);
+
 
 };
 

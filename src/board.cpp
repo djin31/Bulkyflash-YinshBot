@@ -3,9 +3,9 @@
 double RING_WEIGHTS = 10000;
 double MARKER_WEIGHTS = 2;
 double BLOCKING_WEIGHT= 5;
-double WEIGHT_MARKERS_IN_LINE= 1;
+double WEIGHT_MARKERS_IN_LINE= 0.5;
 double NORMALIZE_WEIGHT = 0.5;
-double WEIGHT_TO_RING_IN_LINE = 7;
+double WEIGHT_TO_RING_IN_LINE = 2.5;
 
 Board::Board(){
 
@@ -214,7 +214,7 @@ double Board::eval_func(int player_id){
 		rings_blocked_by_black+=blocked_rings(c);
 
 	
-	score = ring_weights*(white_rings_out-black_rings_out) + marker_weights*(white_markers-black_markers) + blocking_weight*(rings_blocked_by_white-rings_blocked_by_black) + NORMALIZE_WEIGHT*this->eval_markers_in_row();
+	score = ring_weights*(white_rings_out-black_rings_out) + marker_weights*(white_markers-black_markers) + blocking_weight*(rings_blocked_by_white-rings_blocked_by_black) + this->eval_markers_in_row();
 	//score+= controlled_markers_in_row();
 	if (player_id==-1)
 		score+=ring_weights*white_rings_out;
@@ -1350,5 +1350,16 @@ double Board::eval_markers_in_row(){
 		}
 	}
 	return retVal;
+}
 
+int Board::board_size;			// N
+int Board::given_rings;		// M
+int Board::rings_to_remove;	// L
+int Board::markers_in_line;	// K
+
+void Board::set_board_params(int board_size_in, int given_rings_in, int rings_to_remove_in, int markers_in_line_in){
+	board_size = board_size_in;
+	given_rings = given_rings_in;
+	rings_to_remove = rings_to_remove_in;
+	markers_in_line = markers_in_line_in;
 }
