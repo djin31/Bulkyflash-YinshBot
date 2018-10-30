@@ -927,10 +927,10 @@ void Board::printBoard(){
 			coordinates c;
 			c.x = i;
 			c.y = j;
-			//if (checkValid(c))
+			if (checkValid(c))
 				cerr << board[i][j] << " ";
-			//else
-			//	cerr << "  ";
+			else
+				cerr << "  ";
 			if(j == 2*board_size)
 				cerr << endl;
 		}

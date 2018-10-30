@@ -3,20 +3,21 @@
 
 using namespace std;
 
-int main()
+int main(int argc, char*argv[])
 {
-	int player_id, board_size, time_limit, seq_length;
-	cin >> player_id >> board_size >> seq_length >> time_limit;
+	int player_id, board_size, time_limit, seq_length, given_rings;
 	string dummy;
+	cin >> player_id >> board_size >> time_limit >> seq_length;
 	getline(cin,dummy);
-	Board::set_board_params(board_size,5,3,5);
+	given_rings = board_size;
+	Board::set_board_params(board_size,given_rings,3,seq_length);
 	
 	if (player_id==2)
 		player_id=1;
 	else
 		player_id=-1;
+
 	Bot bot = Bot(player_id,time_limit);
 	bot.play();
 	return 0;
 }
-

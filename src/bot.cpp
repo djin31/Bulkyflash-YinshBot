@@ -15,7 +15,7 @@ Bot::Bot(int player_id, double time_limit){
 	check_board = new Board();
 	this->player_id = player_id;
 	this->time_left = time_limit;
-
+	BOARD_SIZE = Board::board_size;
     srand(time(NULL));
 
 }
@@ -184,10 +184,9 @@ void Bot::place_ring(){
 	}
 
 	int rings_placed=0;
-	int rings_to_be_placed=5;
 	location l;
 	coordinates c;
-	while(rings_placed<rings_to_be_placed){
+	while(rings_placed<Board::given_rings){
 		double time_tick = clock();
 		rings_placed++;
 		
@@ -202,11 +201,12 @@ void Bot::place_ring(){
 			root->board->execute_move(move);
 			cout<<move<<endl;
 		}
-		
+		// root->board->printBoard();
 		time_left -= ((double)(clock()-time_tick))/CLOCKS_PER_SEC;
 		getline(cin,move);
 		
 		root->board->execute_move(move);
+		// root->board->printBoard();
 	}
 }
 
@@ -270,9 +270,9 @@ void Bot::play(){
 			
 		}
 		time_left -= ((double)(clock()-time_tick))/CLOCKS_PER_SEC;
+
 		
 		read_move();
-
 	}
 	
 }
