@@ -1,5 +1,14 @@
 #include "eval_functions.h"
 
+void set_eval_params(vector<double> params){
+	RING_WEIGHTS = params[0];
+	MARKER_WEIGHTS = params[1];
+	BLOCKING_WEIGHT = params[2];
+	WEIGHT_MARKERS_IN_LINE = params[3];
+	NORMALIZE_WEIGHT = params[4];
+	WEIGHT_TO_RING_IN_LINE = params[5];
+}
+
 double eval_func(const Board &board, int player_id){
 	double hugeNumber = 1000000;
 
