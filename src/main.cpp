@@ -1,11 +1,13 @@
 #include<iostream>
 #include "bot.h"
-
+#include "util.h"
 using namespace std;
+
+int board_size;
 
 int main(int argc, char*argv[])
 {
-	int player_id, board_size, time_limit, seq_length, given_rings;
+	int player_id, time_limit, seq_length, given_rings;
 	string dummy;
 	cin >> player_id >> board_size >> time_limit >> seq_length;
 	getline(cin,dummy);

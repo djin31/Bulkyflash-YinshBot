@@ -32,7 +32,7 @@ bool rev_node_compare(Treenode* a, Treenode* b)
 
 void Bot::minVal(Treenode* node, double alpha, double beta, int depth_left){
 	if (depth_left==0||node->board->check_terminal()){
-		node->value = node->board->eval_func(player_id);
+		node->value = eval_func(*node->board, player_id);
 		return;
 	}
 	if (node->children.size()==0){
@@ -71,7 +71,7 @@ void Bot::minVal(Treenode* node, double alpha, double beta, int depth_left){
 void Bot::maxVal(Treenode* node, double alpha, double beta, int depth_left){
 	
 	if (depth_left==0||node->board->check_terminal()){
-		node->value = node->board->eval_func(player_id);
+		node->value = eval_func(*node->board, player_id);
 		return;
 	}
 	if (node->children.size()==0){
@@ -136,12 +136,12 @@ location Bot::best_place_ring(){
 		l.hexagon=i;
 		for (int j=0;j<6*i;j++){
 			l.position=j;
-			c = root->board->location_to_coordinates(l);
+			c = location_to_coordinates(l);
 			if (root->board->board[c.x][c.y]!=0)
 				continue;
 			randomising_seed=double(rand())/RAND_MAX;
 			newBoard->board[c.x][c.y]=2*player_id;
-			block = newBoard->blocked_rings(c) + 2*newBoard->self_blocked_rings(c);
+			block = blocked_rings(newBoard->board, c) + 2*self_blocked_rings(newBoard->board, c);
 			if ((block>max_block && randomising_seed>0.5) || (block==max_block && randomising_seed>0.8)){
 				max_block=block;
 				best_coord.x=c.x;
@@ -154,12 +154,12 @@ location Bot::best_place_ring(){
 	l.hexagon=BOARD_SIZE;
 	for (int j=0;j<6*BOARD_SIZE;j++){
 		l.position=j;
-		c = root->board->location_to_coordinates(l);
+		c = location_to_coordinates(l);
 		if (root->board->board[c.x][c.y]!=0)
 			continue;
 		randomising_seed=double(rand())/RAND_MAX;
 		newBoard->board[c.x][c.y]=2*player_id;
-		block = newBoard->blocked_rings(c) + 2*newBoard->self_blocked_rings(c);
+		block = blocked_rings(newBoard->board, c) + 2*self_blocked_rings(newBoard->board, c);
 		if (block>=max_block && randomising_seed>0.5){
 			max_block=block;
 			best_coord.x=c.x;
@@ -168,7 +168,7 @@ location Bot::best_place_ring(){
 		newBoard->board[c.x][c.y]=0;
 	}
 	delete newBoard;
-	best_location = root->board->coordinates_to_location(best_coord);
+	best_location = coordinates_to_location(best_coord);
 	return best_location;
 
 }

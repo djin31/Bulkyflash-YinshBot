@@ -9,22 +9,7 @@
 #include <string>
 #include "util.h"
 
-
 using namespace std;
-		
-struct location
-{
-	int hexagon;
-	int position;
-
-};
-
-struct coordinates
-{
-	int x;	//vertical line
-	int y;	//line 60* to the horizontal (CCW)
-};
-
 
 class Board{
 	public:
@@ -44,8 +29,6 @@ class Board{
 
 		//helper functions
 		void iterate_over_line(int value, int c, int line_no, int start, int end);	// value = -1 for flip, 0 for remove //  c = 0 for iterating over x, 1 for y // iteration only along x or y
-		coordinates location_to_coordinates(location l);
-		location coordinates_to_location(coordinates c);
 		std::pair<Board*, string> moveRing_to_pair(Board *b, coordinates start, coordinates end, string removeMarker_string);
 		string moveRing_to_string(coordinates start, coordinates end, string removeMarker_string);
 
@@ -55,28 +38,16 @@ class Board{
 		bool moveRing(coordinates start, coordinates end);
 		bool removeMarkerSeq(coordinates start, coordinates end);
 		bool removeRing(coordinates c);
-		void execute_move_place_ring(location l);
-		void execute_move_move_ring(location start, location end);
-		void execute_move_remove_row_ring(location start, location end, location ring);
 		vector<pair<coordinates, coordinates>> get_markers_in_a_row();
 		vector<pair<Board*, string>> possible_removeMarker_orders(Board* b);
 		vector<pair<Board*, string>> possible_moveRing_orders(Board* b, string removeMarker_string);
 		vector<string> possible_removeMarker_actions(Board* b);
 		vector<string> possible_moveRing_actions(Board* b, string removeMarker_string);
-		bool checkValid(coordinates c);
 	//=========== use ony these functions publically===========
 		Board();
 		
 		//execute a move on the board // s has space after every character
 		void execute_move(string s);
-
-		//give the goodness of the current state of the board
-		double eval_func(int player_id);
-
-		// gives the number of rings which are blocked
-		int blocked_rings(coordinates c);
-		int self_blocked_rings(coordinates c);
-		double eval_markers_in_row();
 
 		//get the valid moves on the current board
 		vector<pair<Board*, string>> get_valid_moves();		//does not give children when all the rings have not been placed // use only for move ring and remove ring
@@ -101,5 +72,7 @@ class Board{
 
 
 };
+
+#include "eval_functions.h"
 
 #endif
