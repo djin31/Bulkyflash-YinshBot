@@ -2,8 +2,8 @@
 
 int MAX_DEPTH;
 #define CHILDREN_THRESHOLD 35;
-#define DEEP_MAX_DEPTH 1;
-#define SHALLOW_MAX_DEPTH 1;
+#define DEEP_MAX_DEPTH 2;
+#define SHALLOW_MAX_DEPTH 2;
 #define SAVED_CHILDREN_CUTOFF 3;
 
 Bot::Bot(int player_id, double time_limit){  
@@ -195,36 +195,6 @@ void Bot::minimax_decision(){
 void Bot::play(){
 	place_ring();
 	int MAX_MOVES=100;
-
-	cerr << "STRESS TEST\n";
-	cerr << "TIME FOR 1000 execute move\n";
-	double time_start=clock();
-	string move = "P 0 0";
-	this->board->execute_move(move);
-	for(int i = 0; i < 500; i++){
-		move = "S 0 0 M 4 2";
-		this->board->execute_move(move);
-		move = "S 4 2 M 0 0";
-		this->board->execute_move(move);
-	}
-	double time_end = clock();
-	cerr << "time taken : " << (time_end - time_start)/CLOCKS_PER_SEC << "\n\n";
-
-	cerr << "TIME FOR 100 get_valid_actions\n";
-	time_start=clock();
-	for(int i = 0; i < 100; i++){
-		vector<string> children = this->board->get_valid_actions();
-	}
-	time_end = clock();
-	cerr << "time taken : " << (time_end - time_start)/CLOCKS_PER_SEC << "\n\n";
-
-	cerr << "TIME FOR 100 eval_func\n";
-	time_start=clock();
-	for(int i = 0; i < 100; i++){
-		eval_func(*board, player_id);
-	}
-	time_end = clock();
-	cerr << "time taken : " << (time_end - time_start)/CLOCKS_PER_SEC << "\n";
 
 	while(MAX_MOVES>0){
 		MAX_MOVES--;
