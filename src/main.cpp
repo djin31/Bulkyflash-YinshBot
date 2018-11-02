@@ -14,6 +14,12 @@ int main(int argc, char*argv[])
 	given_rings = board_size;
 	Board::set_board_params(board_size,given_rings,3,seq_length);
 	
+	vector<double> params;
+	for (int i=0;i<argc;i++){
+		params.push_back(stof(argv[i]));
+	}
+	set_eval_parameters(params);
+	
 	if (player_id==2)
 		player_id=1;
 	else
