@@ -7,18 +7,18 @@ int board_size;
 
 int main(int argc, char*argv[])
 {
-	int player_id, time_limit, seq_length, given_rings;
+	int player_id, time_limit, seq_length=5, given_rings;
 	string dummy;
-	cin >> player_id >> board_size >> time_limit >> seq_length;
+	cin >> player_id >> board_size >> time_limit; //>> seq_length;
 	getline(cin,dummy);
 	given_rings = board_size;
 	Board::set_board_params(board_size,given_rings,3,seq_length);
 	
-	vector<double> params;
+	/*vector<double> params;
 	for (int i=0;i<argc;i++){
 		params.push_back(stof(argv[i]));
-	}
-	set_eval_parameters(params);
+	}*/
+	//set_eval_parameters(params);
 	
 	if (player_id==2)
 		player_id=1;

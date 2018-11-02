@@ -45,6 +45,7 @@ class Board{
 		vector<string> possible_moveRing_actions(Board* b, string removeMarker_string);
 	//=========== use ony these functions publically===========
 		Board();
+		Board(const Board &b);
 		
 		//execute a move on the board // s has space after every character
 		void execute_move(string s);

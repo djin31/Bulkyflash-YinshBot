@@ -2,8 +2,8 @@
 
 int MAX_DEPTH;
 #define CHILDREN_THRESHOLD 35;
-#define DEEP_MAX_DEPTH 3;
-#define SHALLOW_MAX_DEPTH 2;
+#define DEEP_MAX_DEPTH 1;
+#define SHALLOW_MAX_DEPTH 1;
 #define SAVED_CHILDREN_CUTOFF 3;
 
 Bot::Bot(int player_id, double time_limit){  
@@ -19,10 +19,12 @@ double Bot::minVal(Board *board, double alpha, double beta, int depth_left){
 	}
 	double minValue = INT_MAX;
 	
-	vector<pair<Board*, string>> children = board->get_valid_moves();
+	vector<string> children = board->get_valid_actions();
 	
 	for( auto s : children ){
-		double val = maxVal(s.first, alpha, beta, depth_left-1);
+		Board tempBoard = *board;
+		tempBoard.execute_move(s);
+		double val = maxVal(&tempBoard, alpha, beta, depth_left-1);
 		beta =  min(beta, val);
 		if (alpha>=beta){
 			return val;
@@ -39,10 +41,12 @@ double Bot::maxVal(Board *board, double alpha, double beta, int depth_left){
 	}
 	double maxValue = INT_MIN;
 	
-	vector<pair<Board*, string>> children = board->get_valid_moves();
+	vector<string> children = board->get_valid_actions();
 
 	for (auto s : children){
-		double val = minVal(s.first, alpha, beta, depth_left-1);
+		Board tempBoard = *board;
+		tempBoard.execute_move(s);
+		double val = minVal(&tempBoard, alpha, beta, depth_left-1);
 		alpha =  max(alpha, val);
 		if (alpha>=beta){
 		 	return val;
@@ -157,12 +161,14 @@ void Bot::minimax_decision(){
 	if (player_id==1){
 		double minValue = INT_MAX;
 		string minAction = "";
-		vector<pair<Board*, string>> children = this->board->get_valid_moves();
+		vector<string> children = this->board->get_valid_actions();
 		for( auto s : children ){
-			double val = maxVal(s.first, INT_MIN, INT_MAX, MAX_DEPTH);
+			Board tempBoard = *board;
+			tempBoard.execute_move(s);
+			double val = maxVal(&tempBoard, INT_MIN, INT_MAX, MAX_DEPTH);
 			if(minValue > val){
 				minValue = val;
-				minAction = s.second;
+				minAction = s;
 			}
 		}
 		this->board->execute_move(minAction);
@@ -171,12 +177,14 @@ void Bot::minimax_decision(){
 	else{
 		double maxValue = INT_MIN;
 		string maxAction = "";
-		vector<pair<Board*, string>> children = this->board->get_valid_moves();
+		vector<string> children = this->board->get_valid_actions();
 		for( auto s : children ){
-			double val = minVal(s.first, INT_MIN, INT_MAX, MAX_DEPTH);
+			Board tempBoard = *board;
+			tempBoard.execute_move(s);
+			double val = minVal(&tempBoard, INT_MIN, INT_MAX, MAX_DEPTH);
 			if(maxValue < val){
 				maxValue = val;
-				maxAction = s.second;
+				maxAction = s;
 			}
 		}
 		this->board->execute_move(maxAction);
@@ -187,6 +195,36 @@ void Bot::minimax_decision(){
 void Bot::play(){
 	place_ring();
 	int MAX_MOVES=100;
+
+	cerr << "STRESS TEST\n";
+	cerr << "TIME FOR 1000 execute move\n";
+	double time_start=clock();
+	string move = "P 0 0";
+	this->board->execute_move(move);
+	for(int i = 0; i < 500; i++){
+		move = "S 0 0 M 4 2";
+		this->board->execute_move(move);
+		move = "S 4 2 M 0 0";
+		this->board->execute_move(move);
+	}
+	double time_end = clock();
+	cerr << "time taken : " << (time_end - time_start)/CLOCKS_PER_SEC << "\n\n";
+
+	cerr << "TIME FOR 100 get_valid_actions\n";
+	time_start=clock();
+	for(int i = 0; i < 100; i++){
+		vector<string> children = this->board->get_valid_actions();
+	}
+	time_end = clock();
+	cerr << "time taken : " << (time_end - time_start)/CLOCKS_PER_SEC << "\n\n";
+
+	cerr << "TIME FOR 100 eval_func\n";
+	time_start=clock();
+	for(int i = 0; i < 100; i++){
+		eval_func(*board, player_id);
+	}
+	time_end = clock();
+	cerr << "time taken : " << (time_end - time_start)/CLOCKS_PER_SEC << "\n";
 
 	while(MAX_MOVES>0){
 		MAX_MOVES--;

@@ -172,7 +172,6 @@ bool Board::removeRing(coordinates c){
 void Board::execute_move(string s){
 	std::vector<std::string> tokens = split(s, ' ');
 	int i = 0;
-	//cerr<<"EXECUTE MOVE "<<tokens.size()<<endl;
 	while(i < tokens.size()){
 		if(tokens[i].compare("P") == 0){
 			location l;
@@ -734,6 +733,24 @@ Board* Board::copy_board(){
 		}
 	}
 	return newBoard;
+}
+
+Board::Board(const Board &b){
+	this->black_rings_in = b.black_rings_in;
+	this->black_rings_out = b.black_rings_out;
+	this->white_rings_in = b.white_rings_in;
+	this->white_rings_out = b.white_rings_out;
+	this->turn_id = b.turn_id;
+	for(int i = 0; i < b.white_rings.size(); i++)
+		this->white_rings.push_back(b.white_rings[i]);
+	for(int i = 0; i < b.black_rings.size(); i++)
+		this->black_rings.push_back(b.black_rings[i]);
+	board.resize(b.board.size(), vector<int>(b.board[0].size()));
+	for(int i = 0; i < 2*board_size+1; i++){
+		for(int j = 0; j < 2*board_size+1; j++){
+			this->board[i][j] = b.board[i][j];
+		}
+	}
 }
 
 void Board::printBoard(){
