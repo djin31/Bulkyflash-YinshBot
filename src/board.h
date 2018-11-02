@@ -73,6 +73,4 @@ class Board{
 
 };
 
-#include "eval_functions.h"
-
 #endif

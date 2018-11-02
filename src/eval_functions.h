@@ -3,7 +3,6 @@
 
 #include "eval_functions.h"
 #include "board.h"
-#include "util.h"
 
 static double RING_WEIGHTS = 10000;
 static double MARKER_WEIGHTS = 2;
