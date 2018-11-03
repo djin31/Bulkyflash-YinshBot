@@ -23,7 +23,7 @@ class Bot{
 
     location best_place_ring();
     void place_ring();
-    void minimax_decision();
+    void minimax_decision(int MOVE_NO);
     void play();
     void read_move();
 };
