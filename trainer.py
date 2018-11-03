@@ -3,6 +3,7 @@
 import os, time, random
 SERVER_LOG = "server.log"
 
+
 def read_scores():
     f=open(SERVER_LOG)
     s = f.readline()
@@ -18,6 +19,7 @@ def param_string(l):
     for i in l:
         s+=str(i)+" "
     return s
+
 def update_params(a_params,b_params):
     f = open("runa.sh",'w')
     f.write("#!/bin/bash\n")
@@ -29,11 +31,16 @@ def update_params(a_params,b_params):
     f.write("../YINSH_AI_bot/runner "+param_string(b_params)+"\n")
     f.close()
 
-a_params = [2,5,0.5,3.5,2]
+a_params = [2,5,0.5,3,2]
 b_params = [2,5,0.5,3.5,2]
 feature = random.randint(0,10000)%(len(a_params))
 modif = 0.9 + 0.2*random.random()
-a_params[feature] = a_params[feature]*modif
+if (random.random()>0.5):
+	if (modif>1):
+		modif +=0.05
+	else:
+		modif -=0.05
+# a_params[feature] = a_params[feature]*modif
 
 epochs = 30
 while epochs>0:
@@ -67,7 +74,7 @@ while epochs>0:
     print "A_PARAMS ",a_params,a_score
     print "B_PARAMS ",b_params,b_score
 
-    if ((a_score-b_score)>0):
+    if ((a_score-b_score)>0.5):
         for i in xrange(len(b_params)):
             b_params[i]=a_params[i]
         # if a wins then use 90% of previous modif on same feature
@@ -78,6 +85,11 @@ while epochs>0:
             a_params[i]=b_params[i]
         feature = random.randint(0,10000)%(len(a_params))
         modif = 0.9 + 0.2*random.random()
+        if (random.random()>0.5):
+			if (modif>1):
+				modif +=0.05
+			else:
+				modif -=0.05
         a_params[feature] = a_params[feature]*modif
 
 
