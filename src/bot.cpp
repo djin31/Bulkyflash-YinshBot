@@ -153,9 +153,9 @@ void Bot::place_ring(){
 	}
 }
 
-void Bot::minimax_decision(){
+void Bot::minimax_decision(int MOVE_NUMBER){
 	MAX_DEPTH = DEEP_MAX_DEPTH;
-	if (time_left<20)
+	if (time_left<20 || MOVE_NUMBER<10)
 		MAX_DEPTH=SHALLOW_MAX_DEPTH;
 
 	if (player_id==1){
@@ -199,7 +199,7 @@ void Bot::play(){
 	while(MAX_MOVES>0){
 		MAX_MOVES--;
 		double time_tick=clock();
-		minimax_decision();
+		minimax_decision(100-MAX_MOVES);
 		time_left -= ((double)(clock()-time_tick))/CLOCKS_PER_SEC;
 		read_move();
 	}

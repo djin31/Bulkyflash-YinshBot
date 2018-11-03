@@ -1,16 +1,21 @@
 #include "eval_functions.h"
 
 void set_eval_params(vector<double> params){
-	RING_WEIGHTS = params[0];
-	MARKER_WEIGHTS = params[1];
-	BLOCKING_WEIGHT = params[2];
-	WEIGHT_MARKERS_IN_LINE = params[3];
-	NORMALIZE_WEIGHT = params[4];
-	WEIGHT_TO_RING_IN_LINE = params[5];
+	if (params.size()==5)
+	{	
+		MARKER_WEIGHTS = params[0];
+		BLOCKING_WEIGHT = params[1];
+		WEIGHT_MARKERS_IN_LINE = params[2];
+		WEIGHT_TO_RING_IN_LINE = params[3];
+		CONTROL_MARKERS = params[4];
+	}
+	else
+	{
+		cerr<<"Incorrect parameters for eval\n";
+	}
 }
 
 double eval_func(const Board &board, int player_id){
-	double hugeNumber = 1000000;
 
 	if (board.white_rings_out>=board.rings_to_remove)
 		return hugeNumber;
@@ -29,11 +34,13 @@ double eval_func(const Board &board, int player_id){
 
 	
 	score = ring_weights*(board.white_rings_out-board.black_rings_out) + marker_weights*(board.white_markers-board.black_markers) + blocking_weight*(rings_blocked_by_white-rings_blocked_by_black) + eval_markers_in_row(board.board, board.board_size);
-	//score+= controlled_markers_in_row();
+	score+= CONTROL_MARKERS * control_markers(board.board, board.board_size);
+
 	if (player_id==-1)
-		score+=ring_weights*board.white_rings_out;
-	else
-		score-=ring_weights*board.black_rings_out;
+ 		score+=ring_weights*board.white_rings_out;
+ 	else
+ 		score-=ring_weights*board.black_rings_out;
+
 	return score;
 }
 
@@ -172,7 +179,7 @@ int self_blocked_rings(const vector<vector<int>> &board, coordinates c){
 double eval_markers_in_row(const vector<vector<int>> &board, int board_size){
 	double weight_to_ring=WEIGHT_TO_RING_IN_LINE;
 	double retVal=0;
-	double counter_value[] = {1, 3, 9, 27, 81, 100, 150, 220, 310, 410, 550};
+	double counter_value[] = {1, 2, 4, 8, 16, 16, 16, 16, 16, 16, 16, 16, 16, 256};
 	coordinates start_coord,end_coord;
 	
 	for (int i=0;i<2*board_size+1;i++){
@@ -199,8 +206,11 @@ double eval_markers_in_row(const vector<vector<int>> &board, int board_size){
 			}
 			// retVal - since white has negative turn id
 			retVal-=board[i][j]*counter_value[counter]*WEIGHT_MARKERS_IN_LINE;
-			if (checkValid(end_coord))
+			if (checkValid(end_coord)){
 				retVal-=board[i][k]*counter_value[counter]*weight_to_ring;
+				if (board[i][k]==2*board[i][j])
+					retVal-=board[i][k]*counter_value[counter]*weight_to_ring;
+			}
 
 			// moving up
 			// cerr<<"check up"<<endl;
@@ -218,8 +228,11 @@ double eval_markers_in_row(const vector<vector<int>> &board, int board_size){
 				
 			}
 			retVal-=board[i][j]*counter_value[counter]*WEIGHT_MARKERS_IN_LINE;
-			if (checkValid(end_coord))
+			if (checkValid(end_coord)){
 				retVal-=board[i][k]*counter_value[counter]*weight_to_ring;
+				if (board[i][k]==2*board[i][j])
+					retVal-=board[i][k]*counter_value[counter]*weight_to_ring;
+			}
 
 			// moving right sideways
 			// cerr<<"check right"<<endl;
@@ -236,8 +249,11 @@ double eval_markers_in_row(const vector<vector<int>> &board, int board_size){
 				
 			}
 			retVal-=board[i][j]*counter_value[counter]*WEIGHT_MARKERS_IN_LINE;
-			if (checkValid(end_coord))
-				retVal-=board[k][i]*counter_value[counter]*weight_to_ring;
+			if (checkValid(end_coord)){
+				retVal-=board[i][k]*counter_value[counter]*weight_to_ring;
+				if (board[i][k]==2*board[i][j])
+					retVal-=board[i][k]*counter_value[counter]*weight_to_ring;
+			}
 
 			// moving left sideways
 			// cerr<<"check left"<<endl;
@@ -254,9 +270,12 @@ double eval_markers_in_row(const vector<vector<int>> &board, int board_size){
 				
 			}
 			retVal-=board[i][j]*counter_value[counter]*WEIGHT_MARKERS_IN_LINE;
-			if (checkValid(end_coord))
-				retVal-=board[k][i]*counter_value[counter]*weight_to_ring;
-			
+			if (checkValid(end_coord)){
+				retVal-=board[i][k]*counter_value[counter]*weight_to_ring;
+				if (board[i][k]==2*board[i][j])
+					retVal-=board[i][k]*counter_value[counter]*weight_to_ring;
+			}
+
 			// moving diagonal right down
 			// cerr<<"check diagonal right"<<endl;
 			counter=1;
@@ -274,8 +293,11 @@ double eval_markers_in_row(const vector<vector<int>> &board, int board_size){
 				
 			}
 			retVal-=board[i][j]*counter_value[counter]*WEIGHT_MARKERS_IN_LINE;
-			if (checkValid(end_coord))
-				retVal-=board[k][l]*counter_value[counter]*weight_to_ring;
+			if (checkValid(end_coord)){
+				retVal-=board[i][k]*counter_value[counter]*weight_to_ring;
+				if (board[i][k]==2*board[i][j])
+					retVal-=board[i][k]*counter_value[counter]*weight_to_ring;
+			}
 
 			// moving diagonal right down
 			// cerr<<"check diagonal leftt"<<endl;
@@ -295,9 +317,134 @@ double eval_markers_in_row(const vector<vector<int>> &board, int board_size){
 				
 			}
 			retVal-=board[i][j]*counter_value[counter]*WEIGHT_MARKERS_IN_LINE;
-			if (checkValid(end_coord))
-				retVal-=board[k][l]*counter_value[counter]*weight_to_ring;
+			if (checkValid(end_coord)){
+				retVal-=board[i][k]*counter_value[counter]*weight_to_ring;
+				if (board[i][k]==2*board[i][j])
+					retVal-=board[i][k]*counter_value[counter]*weight_to_ring;
+			}
 
+		}
+	}
+	return retVal;
+}
+
+double control_markers(const vector<vector<int>> &board, int board_size){
+	double retVal=0;
+	double counter_value[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+	coordinates start_coord,end_coord;
+	bool vertical=false,horizontal=false,diagonal=false;
+	for (int i=0;i<2*board_size+1;i++){
+		for (int j=0;j<2*board_size+1;j++){
+			
+			start_coord.x=i;
+			start_coord.y=j;
+			if (!(checkValid(start_coord) && abs(board[i][j])==1))
+				continue;
+
+			vertical=false; horizontal=false; diagonal=false;
+
+			//moving down
+			// cerr<<"check down"<<endl;
+			int k=j+1,l;
+			end_coord.x=i;
+			end_coord.y=k;
+
+			while(checkValid(end_coord) && abs(board[end_coord.x][end_coord.y])==1)
+			{
+				end_coord.y=++k;				
+			}
+			if (checkValid(end_coord) && abs(board[end_coord.x][end_coord.y])==0)
+				continue;
+			else
+				vertical = true;
+			
+			//moving up
+			// cerr<<"check up"<<endl;
+			if (!vertical){
+				int k=j-1,l;
+				end_coord.x=i;
+				end_coord.y=k;
+
+				while(checkValid(end_coord) && abs(board[end_coord.x][end_coord.y])==1)
+				{
+					end_coord.y=--k;				
+				}
+				if (checkValid(end_coord) && abs(board[end_coord.x][end_coord.y])==0)
+					continue;
+				else
+					vertical = true;
+			}
+
+			// moving right sideways
+			// cerr<<"check right"<<endl;
+			k=i+1;
+			end_coord.x=k;
+			end_coord.y=j;
+
+			while(checkValid(end_coord) && abs(board[end_coord.x][end_coord.y])==1)
+			{
+				end_coord.x=++k;				
+			}
+			if (checkValid(end_coord) && abs(board[end_coord.x][end_coord.y])==0)
+				continue;
+			else
+				horizontal=true;
+
+			
+			// moving left sideways
+			// cerr<<"check left"<<endl;
+			if (!horizontal){	
+				k=i-1;
+				end_coord.x=k;
+				end_coord.y=j;
+
+				while(checkValid(end_coord) && abs(board[end_coord.x][end_coord.y])==1)
+				{
+					end_coord.x=--k;				
+				}
+				if (checkValid(end_coord) && abs(board[end_coord.x][end_coord.y])==0)
+					continue;
+				else
+					horizontal=true;
+			}
+
+			// moving diagonal right down
+			// cerr<<"check diagonal right"<<endl;
+			k=i+1;
+			l=j+1;
+			end_coord.x=k;
+			end_coord.y=l;
+			while(checkValid(end_coord) && abs(board[end_coord.x][end_coord.y])==1)
+			{
+				end_coord.x=++k;
+				end_coord.y=++l;
+				
+			}
+			if (checkValid(end_coord) && abs(board[end_coord.x][end_coord.y])==0)
+				continue;
+			else
+				diagonal=true;
+
+			// moving diagonal right down
+			// cerr<<"check diagonal leftt"<<endl;
+			if (!diagonal){	
+				k=i-1;
+				l=j-1;
+				end_coord.x=k;
+				end_coord.y=l;
+				while(checkValid(end_coord) && abs(board[end_coord.x][end_coord.y])==1)
+				{
+					end_coord.x=--k;
+					end_coord.y=--l;
+					
+				}
+				if (checkValid(end_coord) && abs(board[end_coord.x][end_coord.y])==0)
+					continue;
+				else
+					diagonal=true;
+			}
+			if (vertical && diagonal && horizontal)
+				retVal-=board[i][j];
 		}
 	}
 	return retVal;

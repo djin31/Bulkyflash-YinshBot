@@ -15,10 +15,10 @@ int main(int argc, char*argv[])
 	Board::set_board_params(board_size,given_rings,3,seq_length);
 	
 	vector<double> params;
-	for (int i=0;i<argc;i++){
+	for (int i=1;i<argc;i++){
 		params.push_back(stof(argv[i]));
 	}
-	//set_eval_parameters(params);
+	set_eval_params(params);
 	
 	if (player_id==2)
 		player_id=1;
