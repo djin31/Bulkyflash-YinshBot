@@ -757,10 +757,10 @@ void Board::printBoard(){
 	for(int i = 0; i < 2*board_size+1; i++){
 		for(int j = 0; j <2*board_size+1; j++){
 			coordinates c;
-			c.x = i;
-			c.y = j;
+			c.x = j;
+			c.y = i;
 			if (checkValid(c))
-				cerr << board[i][j] << " ";
+				cerr << board[j][i] << " ";
 			else
 				cerr << "  ";
 			if(j == 2*board_size)

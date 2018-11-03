@@ -3,8 +3,10 @@
 int MAX_DEPTH;
 #define CHILDREN_THRESHOLD 35;
 #define DEEP_MAX_DEPTH 2;
-#define SHALLOW_MAX_DEPTH 2;
+#define SHALLOW_MAX_DEPTH 1;
 #define SAVED_CHILDREN_CUTOFF 3;
+
+long long nodes_seen = 0;
 
 Bot::Bot(int player_id, double time_limit){  
 	this->board = new Board();
@@ -20,7 +22,7 @@ double Bot::minVal(Board *board, double alpha, double beta, int depth_left){
 	double minValue = INT_MAX;
 	
 	vector<string> children = board->get_valid_actions();
-	
+	nodes_seen += children.size();
 	for( auto s : children ){
 		Board tempBoard = *board;
 		tempBoard.execute_move(s);
@@ -42,7 +44,7 @@ double Bot::maxVal(Board *board, double alpha, double beta, int depth_left){
 	double maxValue = INT_MIN;
 	
 	vector<string> children = board->get_valid_actions();
-
+	nodes_seen += children.size();
 	for (auto s : children){
 		Board tempBoard = *board;
 		tempBoard.execute_move(s);
@@ -144,16 +146,15 @@ void Bot::place_ring(){
 			board->execute_move(move);
 			cout<<move<<endl;
 		}
-		// root->board->printBoard();
 		time_left -= ((double)(clock()-time_tick))/CLOCKS_PER_SEC;
 		getline(cin,move);
 		
 		board->execute_move(move);
-		// root->board->printBoard();
 	}
 }
 
 void Bot::minimax_decision(){
+	nodes_seen = 0;
 	MAX_DEPTH = DEEP_MAX_DEPTH;
 	if (time_left<20)
 		MAX_DEPTH=SHALLOW_MAX_DEPTH;
@@ -162,7 +163,9 @@ void Bot::minimax_decision(){
 		double minValue = INT_MAX;
 		string minAction = "";
 		vector<string> children = this->board->get_valid_actions();
+		nodes_seen += children.size();
 		for( auto s : children ){
+			//cerr << s << "\n";
 			Board tempBoard = *board;
 			tempBoard.execute_move(s);
 			double val = maxVal(&tempBoard, INT_MIN, INT_MAX, MAX_DEPTH);
@@ -178,7 +181,9 @@ void Bot::minimax_decision(){
 		double maxValue = INT_MIN;
 		string maxAction = "";
 		vector<string> children = this->board->get_valid_actions();
+		nodes_seen += children.size();
 		for( auto s : children ){
+			//cerr << s << "\n";
 			Board tempBoard = *board;
 			tempBoard.execute_move(s);
 			double val = minVal(&tempBoard, INT_MIN, INT_MAX, MAX_DEPTH);
@@ -190,6 +195,7 @@ void Bot::minimax_decision(){
 		this->board->execute_move(maxAction);
 		cout << maxAction << "\n";
 	}
+	//cerr << "nodes seen : " << nodes_seen << "\n";
 }
 
 void Bot::play(){
@@ -199,7 +205,9 @@ void Bot::play(){
 	while(MAX_MOVES>0){
 		MAX_MOVES--;
 		double time_tick=clock();
+		//board->printBoard();
 		minimax_decision();
+		//board->printBoard();
 		time_left -= ((double)(clock()-time_tick))/CLOCKS_PER_SEC;
 		read_move();
 	}
