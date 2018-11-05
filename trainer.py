@@ -31,8 +31,8 @@ def update_params(a_params,b_params):
     f.write("../YINSH_AI_bot/runner "+param_string(b_params)+"\n")
     f.close()
 
-a_params = [2,5,0.5,3,2]
-b_params = [2,5,0.5,3.5,2]
+a_params = [1,2.5,0.5,1.5,1]
+b_params = [1,2.5,0.5,1.5,1]
 feature = random.randint(0,10000)%(len(a_params))
 modif = 0.9 + 0.2*random.random()
 if (random.random()>0.5):
