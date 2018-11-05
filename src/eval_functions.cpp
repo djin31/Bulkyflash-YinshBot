@@ -22,8 +22,7 @@ double eval_func(const Board &board, int player_id){
 	else if (board.black_rings_out>=board.rings_to_remove)
 		return -hugeNumber;
 
-	double ring_weights = RING_WEIGHTS, marker_weights = MARKER_WEIGHTS, blocking_weight=BLOCKING_WEIGHT;
-	double score;
+	double score = 0.0;
 
 	int rings_blocked_by_white = 0, rings_blocked_by_black=0;
 	for (coordinates c: board.white_rings)
@@ -33,13 +32,11 @@ double eval_func(const Board &board, int player_id){
 		rings_blocked_by_black+=blocked_rings(board.board, c);
 
 	
-	score = ring_weights*(board.white_rings_out-board.black_rings_out) + marker_weights*(board.white_markers-board.black_markers) + blocking_weight*(rings_blocked_by_white-rings_blocked_by_black) + eval_markers_in_row(board.board, board.board_size);
-	score+= CONTROL_MARKERS * control_markers(board.board, board.board_size);
-
-	if (player_id==-1)
- 		score+=ring_weights*board.white_rings_out;
- 	else
- 		score-=ring_weights*board.black_rings_out;
+	score += RING_WEIGHTS*(board.white_rings_out-board.black_rings_out) ;
+	score += MARKER_WEIGHTS*(board.white_markers-board.black_markers);
+	//score += BLOCKING_WEIGHT*(rings_blocked_by_white-rings_blocked_by_black);
+	score += eval_markers_in_row(board.board, board.board_size);
+	//score += CONTROL_MARKERS*control_markers(board.board, board.board_size);
 
 	return score;
 }

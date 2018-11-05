@@ -165,7 +165,7 @@ void Bot::minimax_decision(int MOVE_NUMBER){
 		vector<string> children = this->board->get_valid_actions();
 		nodes_seen += children.size();
 		for( auto s : children ){
-			//cerr << s << "\n";
+			cerr << s << "\n";
 			Board tempBoard = *board;
 			tempBoard.execute_move(s);
 			double val = maxVal(&tempBoard, INT_MIN, INT_MAX, MAX_DEPTH);
@@ -183,7 +183,7 @@ void Bot::minimax_decision(int MOVE_NUMBER){
 		vector<string> children = this->board->get_valid_actions();
 		nodes_seen += children.size();
 		for( auto s : children ){
-			//cerr << s << "\n";
+			cerr << s << "\n";
 			Board tempBoard = *board;
 			tempBoard.execute_move(s);
 			double val = minVal(&tempBoard, INT_MIN, INT_MAX, MAX_DEPTH);
@@ -205,7 +205,9 @@ void Bot::play(){
 	while(MAX_MOVES>0){
 		MAX_MOVES--;
 		double time_tick=clock();
+		board->printBoard();
 		minimax_decision(100-MAX_MOVES);
+		board->printBoard();
 		time_left -= ((double)(clock()-time_tick))/CLOCKS_PER_SEC;
 		read_move();
 	}
