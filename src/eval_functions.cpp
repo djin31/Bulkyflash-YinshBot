@@ -36,10 +36,10 @@ double eval_func(const Board &board, int player_id){
 	score = ring_weights*(board.white_rings_out-board.black_rings_out) + marker_weights*(board.white_markers-board.black_markers) + blocking_weight*(rings_blocked_by_white-rings_blocked_by_black) + eval_markers_in_row(board.board, board.board_size);
 	score+= CONTROL_MARKERS * control_markers(board.board, board.board_size);
 
-	if (player_id==-1)
- 		score+=ring_weights*board.white_rings_out;
- 	else
- 		score-=ring_weights*board.black_rings_out;
+	// if (player_id==-1)
+ 	// 	score+=ring_weights*board.white_rings_out;
+ 	// else
+ 	// 	score-=ring_weights*board.black_rings_out;
 
 	return score;
 }

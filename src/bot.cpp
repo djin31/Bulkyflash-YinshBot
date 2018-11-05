@@ -2,8 +2,8 @@
 
 int MAX_DEPTH;
 #define CHILDREN_THRESHOLD 35;
-#define DEEP_MAX_DEPTH 2;
-#define SHALLOW_MAX_DEPTH 1;
+#define DEEP_MAX_DEPTH 3;
+#define SHALLOW_MAX_DEPTH 2;
 #define SAVED_CHILDREN_CUTOFF 3;
 
 long long nodes_seen = 0;
@@ -87,7 +87,7 @@ location Bot::best_place_ring(){
 			randomising_seed=double(rand())/RAND_MAX;
 			newBoard->board[c.x][c.y]=2*player_id;
 			block = blocked_rings(newBoard->board, c) + 2*self_blocked_rings(newBoard->board, c);
-			if ((block>max_block && randomising_seed>0.5) || (block==max_block && randomising_seed>0.8)){
+			if ((block>max_block && randomising_seed>0.5) || (block==max_block && randomising_seed>(0.8 + 0.02*i))){
 				max_block=block;
 				best_coord.x=c.x;
 				best_coord.y=c.y;
@@ -156,7 +156,7 @@ void Bot::place_ring(){
 void Bot::minimax_decision(int MOVE_NUMBER){
 	nodes_seen = 0;
 	MAX_DEPTH = DEEP_MAX_DEPTH;
-	if (time_left<20 || MOVE_NUMBER<10)
+	if (time_left<20|| MOVE_NUMBER<20)
 		MAX_DEPTH=SHALLOW_MAX_DEPTH;
 
 	if (player_id==1){
