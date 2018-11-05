@@ -37,6 +37,9 @@ double eval_func(const Board &board, int player_id){
 	//score += BLOCKING_WEIGHT*(rings_blocked_by_white-rings_blocked_by_black);
 	//score += eval_markers_in_row(board.board, board.board_size);
 	//score += CONTROL_MARKERS*control_markers(board.board, board.board_size);
+	cerr << "*****\n";
+	cerr << RING_WEIGHTS*(board.white_rings_out-board.black_rings_out) << "\n";
+	cerr << MARKER_WEIGHTS*(board.white_markers-board.black_markers) << "\n";
 
 	return score;
 }
