@@ -5,7 +5,7 @@
 #include "board.h"
 
 static double hugeNumber = 1000000;
-static double RING_WEIGHTS = 10000;
+static double RING_WEIGHTS = 1000;
 static double MARKER_WEIGHTS = 2;
 static double BLOCKING_WEIGHT= 5;
 static double WEIGHT_MARKERS_IN_LINE= 1.0;
