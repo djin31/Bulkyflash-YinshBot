@@ -267,6 +267,7 @@ vector<string> Board::get_valid_actions(){
 		for(int i = 0; i < boards_after_removeMarker.size(); i++){
 			Board* temp_board_after_removeMarker = this->copy_board();
 			temp_board_after_removeMarker->execute_move(boards_after_removeMarker[i]);
+			temp_board_after_removeMarker->turn_id *= -1;
 			if(!(temp_board_after_removeMarker->white_rings_out >= rings_to_remove || temp_board_after_removeMarker->black_rings_out >= rings_to_remove)){
 				vector<string> v = possible_moveRing_actions(temp_board_after_removeMarker, boards_after_removeMarker[i]);
 				boards_after_moveRing.insert(boards_after_moveRing.end(), v.begin(), v.end());
