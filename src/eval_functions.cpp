@@ -17,12 +17,14 @@ void set_eval_params(vector<double> params){
 
 double eval_func(const Board &board, int player_id){
 
-	if (board.white_rings_out>=board.rings_to_remove)
-		return hugeNumber;
-	else if (board.black_rings_out>=board.rings_to_remove)
-		return -hugeNumber;
-
 	double score = 0.0;
+
+	if (board.white_rings_out>=board.rings_to_remove)
+		score+= hugeNumber;
+	else if (board.black_rings_out>=board.rings_to_remove)
+		score-=hugeNumber;
+
+
 
 	int rings_blocked_by_white = 0, rings_blocked_by_black=0;
 	for (coordinates c: board.white_rings)
@@ -37,7 +39,6 @@ double eval_func(const Board &board, int player_id){
 	//score += BLOCKING_WEIGHT*(rings_blocked_by_white-rings_blocked_by_black);
 	score += eval_markers_in_row(board.board, board.board_size);
 	//score += CONTROL_MARKERS*control_markers(board.board, board.board_size);
-	
 	//cerr << "*****\n";
 	//cerr << RING_WEIGHTS*(board.white_rings_out-board.black_rings_out) << "\n";
 	//cerr << MARKER_WEIGHTS*(board.white_markers-board.black_markers) << "\n";

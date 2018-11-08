@@ -806,6 +806,7 @@ void Board::iterate_over_line(int value, int c, int line_no, int start, int end)
 vector<pair<coordinates, coordinates>> Board::get_markers_in_a_row(){
 	vector<pair<coordinates,coordinates>> retVal;
 	coordinates start_coord,end_coord;
+	coordinates tempstart, tempend;
 	location start,end;
 	for (int i=0;i<2*board_size+1;i++){
 		for (int j=0;j<2*board_size+1;j++){
@@ -858,8 +859,9 @@ vector<pair<coordinates, coordinates>> Board::get_markers_in_a_row(){
 					
 				}
 			}
-			if (counter==markers_in_line)
+			if (counter==markers_in_line){
 				retVal.push_back(make_pair(start_coord,end_coord));
+			}
 
 			// moving right sideways
 			// cerr<<"check right"<<endl;
