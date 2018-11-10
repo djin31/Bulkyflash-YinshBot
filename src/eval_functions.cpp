@@ -20,9 +20,9 @@ double eval_func(const Board &board, int player_id){
 	double score = 0.0;
 
 	if (board.white_rings_out>=board.rings_to_remove)
-		score+= hugeNumber;
+		return hugeNumber;
 	else if (board.black_rings_out>=board.rings_to_remove)
-		score-=hugeNumber;
+		return -hugeNumber;
 
 
 
@@ -39,11 +39,123 @@ double eval_func(const Board &board, int player_id){
 	//score += BLOCKING_WEIGHT*(rings_blocked_by_white-rings_blocked_by_black);
 	score += eval_markers_in_row(board.board, board.board_size);
 	//score += CONTROL_MARKERS*control_markers(board.board, board.board_size);
-	//cerr << "*****\n";
-	//cerr << RING_WEIGHTS*(board.white_rings_out-board.black_rings_out) << "\n";
-	//cerr << MARKER_WEIGHTS*(board.white_markers-board.black_markers) << "\n";
+	score += RH_WEIGHT*ring_heuristic(board);
 
 	return score;
+}
+
+double num_valid_moves(const vector<vector<int>> &board, coordinates initial){
+	double count = 0.0;
+	bool flag = true;
+	coordinates final;
+	
+	//moving up
+	final.x = initial.x; final.y = initial.y-1;
+	while(checkValid(final)){
+		if(board[final.x][final.y] == 2 || board[final.x][final.y] == -2)
+			break;
+		if(board[final.x][final.y] != 0)
+			flag = false;
+		else{
+			count += 1.0;
+			if(!flag)
+				break;
+		}
+		final.y--;
+	}
+	//moving down
+	final.x = initial.x; final.y = initial.y+1;
+	flag = true;
+	while(checkValid(final)){
+		if(board[final.x][final.y] == 2 || board[final.x][final.y] == -2)
+			break;
+		if(board[final.x][final.y] != 0)
+			flag = false;
+		else{
+			count += 1.0;
+			if(!flag)
+				break;
+		}
+		final.y++;
+	}
+	//moving along increasing x
+	final.x = initial.x + 1; final.y = initial.y;
+	flag = true;
+	while(checkValid(final)){
+		if(board[final.x][final.y] == 2 || board[final.x][final.y] == -2)
+			break;
+		if(board[final.x][final.y] != 0)
+			flag = false;
+		else{
+			count += 1.0;
+			if(!flag)
+				break;
+		}
+		final.x++;
+	}
+	//moving along decreasing x
+	final.x = initial.x-1; final.y = initial.y;
+	flag = true;
+	while(checkValid(final)){
+		if(board[final.x][final.y] == 2 || board[final.x][final.y] == -2)
+			break;
+		if(board[final.x][final.y] != 0)
+			flag = false;
+		else{
+			count += 1.0;
+			if(!flag)
+				break;
+		}
+		final.x--;
+	}
+	//moving along increasing z
+	final.x = initial.x+1; final.y = initial.y+1;
+	flag = true;
+	while(checkValid(final)){
+		if(board[final.x][final.y] == 2 || board[final.x][final.y] == -2)
+			break;
+		if(board[final.x][final.y] != 0)
+			flag = false;
+		else{
+			count += 1;
+			if(!flag)
+				break;
+		}
+		final.x++;
+		final.y++;
+	}
+	//moving along decreasing z
+	final.x = initial.x-1; final.y = initial.y-1;
+	flag = true;
+	while(checkValid(final)){
+		if(board[final.x][final.y] == 2 || board[final.x][final.y] == -2)
+			break;
+		if(board[final.x][final.y] != 0)
+			flag = false;
+		else{
+			count += 1;
+			if(!flag)
+				break;
+		}
+		final.x--;
+		final.y--;
+	}
+	return count;
+}
+
+double ring_heuristic(const Board &board){
+	double val = 0.0;
+
+	Board tempBoard = board;
+	//white rings
+	for(auto c : board.white_rings){
+		val += num_valid_moves(board.board, c);
+	}
+	//black rings
+	for(auto c : board.black_rings){
+		val -= num_valid_moves(board.board, c);
+	}
+	return val;
 }
 
 int blocked_rings(const vector<vector<int>> &board, coordinates c){
@@ -194,139 +306,125 @@ double eval_markers_in_row(const vector<vector<int>> &board, int board_size){
 			
 			//moving down
 			// cerr<<"check down"<<endl;
-			int counter=1,k=j+1,l;
+			int counter=1;
 			end_coord.x=i;
-			end_coord.y=k;
+			end_coord.y=j+1;
 
 			while(checkValid(end_coord))
 			{
-				if (board[i][k]!=board[i][j])
+				if (board[i][end_coord.y]!=board[i][start_coord.y])
 					break;
 				counter++;
-				end_coord.y=++k;
-				
+				end_coord.y++;
 			}
 			// retVal - since white has negative turn id
 			retVal-=board[i][j]*counter_value[counter]*WEIGHT_MARKERS_IN_LINE;
 			if (checkValid(end_coord)){
-				retVal-=board[i][k]*counter_value[counter]*weight_to_ring;
-				if (board[i][k]==2*board[i][j])
-					retVal-=board[i][k]*counter_value[counter]*weight_to_ring;
+				if (board[i][end_coord.y]==2*board[i][j])
+					retVal-=board[i][end_coord.y]*counter_value[counter]*weight_to_ring;
 			}
 
 			// moving up
 			// cerr<<"check up"<<endl;
 			end_coord.x=i;
-			end_coord.y=k;
-
+			end_coord.y=j-1;
 			counter=1;
-			k=j-1;
+
 			while(checkValid(end_coord))
 			{
-				if (board[i][k]!=board[i][j])
+				if (board[i][end_coord.y]!=board[i][j])
 					break;
 				counter++;
-				end_coord.y=--k;
+				end_coord.y--;
 				
 			}
 			retVal-=board[i][j]*counter_value[counter]*WEIGHT_MARKERS_IN_LINE;
 			if (checkValid(end_coord)){
-				retVal-=board[i][k]*counter_value[counter]*weight_to_ring;
-				if (board[i][k]==2*board[i][j])
-					retVal-=board[i][k]*counter_value[counter]*weight_to_ring;
+				if (board[i][end_coord.y]==2*board[i][j])
+					retVal-=board[i][end_coord.y]*counter_value[counter]*weight_to_ring;
 			}
 
 			// moving right sideways
 			// cerr<<"check right"<<endl;
 			counter=1;
-			k=i+1;
-			end_coord.x=k;
+			end_coord.x=i+1;
 			end_coord.y=j;
 			while(checkValid(end_coord))
 			{
-				if (board[k][j]!=board[i][j])
+				if (board[end_coord.x][j]!=board[i][j])
 					break;
 				counter++;
-				end_coord.x=++k;
+				end_coord.x++;
 				
 			}
 			retVal-=board[i][j]*counter_value[counter]*WEIGHT_MARKERS_IN_LINE;
 			if (checkValid(end_coord)){
-				retVal-=board[i][k]*counter_value[counter]*weight_to_ring;
-				if (board[i][k]==2*board[i][j])
-					retVal-=board[i][k]*counter_value[counter]*weight_to_ring;
+				if (board[end_coord.x][j]==2*board[i][j])
+					retVal-=board[end_coord.x][j]*counter_value[counter]*weight_to_ring;
 			}
 
 			// moving left sideways
 			// cerr<<"check left"<<endl;
 			counter=1;
-			k=i-1;
-			end_coord.x=k;
+			end_coord.x=i-1;
 			end_coord.y=j;
 			while(checkValid(end_coord))
 			{
-				if (board[k][j]!=board[i][j])
+				if (board[end_coord.x][j]!=board[i][j])
 					break;
 				counter++;
-				end_coord.x=--k;
+				end_coord.x--;
 				
 			}
 			retVal-=board[i][j]*counter_value[counter]*WEIGHT_MARKERS_IN_LINE;
 			if (checkValid(end_coord)){
-				retVal-=board[i][k]*counter_value[counter]*weight_to_ring;
-				if (board[i][k]==2*board[i][j])
-					retVal-=board[i][k]*counter_value[counter]*weight_to_ring;
+				if (board[end_coord.x][j]==2*board[i][j])
+					retVal-=board[end_coord.x][j]*counter_value[counter]*weight_to_ring;
 			}
 
 			// moving diagonal right down
 			// cerr<<"check diagonal right"<<endl;
 			counter=1;
-			k=i+1;
-			l=j+1;
-			end_coord.x=k;
-			end_coord.y=l;
+			end_coord.x=i+1;
+			end_coord.y=j+1;
 			while(checkValid(end_coord))
 			{
-				if (board[k][l]!=board[i][j])
+				if (board[end_coord.x][end_coord.y]!=board[i][j])
 					break;
 				counter++;
-				end_coord.x=++k;
-				end_coord.y=++l;
+				end_coord.x++;
+				end_coord.y++;
 				
 			}
 			retVal-=board[i][j]*counter_value[counter]*WEIGHT_MARKERS_IN_LINE;
 			if (checkValid(end_coord)){
-				retVal-=board[i][k]*counter_value[counter]*weight_to_ring;
-				if (board[i][k]==2*board[i][j])
-					retVal-=board[i][k]*counter_value[counter]*weight_to_ring;
+				if (board[end_coord.x][end_coord.y]==2*board[i][j])
+					retVal-=board[end_coord.x][end_coord.y]*counter_value[counter]*weight_to_ring;
 			}
 
 			// moving diagonal right down
 			// cerr<<"check diagonal leftt"<<endl;
 			
 			counter=1;
-			k=i-1;
-			l=j-1;
-			end_coord.x=k;
-			end_coord.y=l;
+			end_coord.x=i-1;
+			end_coord.y=j-1;
 			while(checkValid(end_coord))
 			{
-				if (board[k][l]!=board[i][j])
+				if (board[end_coord.x][end_coord.y]!=board[i][j])
 					break;
 				counter++;
-				end_coord.x=--k;
-				end_coord.y=--l;
+				end_coord.x--;
+				end_coord.y--;
 				
 			}
 			retVal-=board[i][j]*counter_value[counter]*WEIGHT_MARKERS_IN_LINE;
 			if (checkValid(end_coord)){
-				retVal-=board[i][k]*counter_value[counter]*weight_to_ring;
-				if (board[i][k]==2*board[i][j])
-					retVal-=board[i][k]*counter_value[counter]*weight_to_ring;
+				if (board[end_coord.x][end_coord.y]==2*board[i][j])
+					retVal-=board[end_coord.x][end_coord.y]*counter_value[counter]*weight_to_ring;
 			}
 
 		}
-	}
+	} 
 	return retVal;
 }
 
