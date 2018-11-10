@@ -38,7 +38,7 @@ double eval_func(const Board &board, int player_id){
 	score += MARKER_WEIGHTS*(board.white_markers-board.black_markers);
 	score += BLOCKING_WEIGHT*(rings_blocked_by_white-rings_blocked_by_black);
 	score += eval_markers_in_row(board.board, board.board_size);
-	//score += CONTROL_MARKERS*control_markers(board.board, board.board_size);
+	score += CONTROL_MARKERS*control_markers(board.board, board.board_size);
 	score += RH_WEIGHT*ring_heuristic(board);
 
 	return score;
@@ -320,6 +320,7 @@ double eval_markers_in_row(const vector<vector<int>> &board, int board_size){
 			// retVal - since white has negative turn id
 			retVal-=board[i][j]*counter_value[counter]*WEIGHT_MARKERS_IN_LINE;
 			if (checkValid(end_coord)){
+				retVal-=board[i][end_coord.y]*counter_value[counter]*weight_to_ring;
 				if (board[i][end_coord.y]==2*board[i][j])
 					retVal-=board[i][end_coord.y]*counter_value[counter]*weight_to_ring;
 			}
@@ -340,6 +341,7 @@ double eval_markers_in_row(const vector<vector<int>> &board, int board_size){
 			}
 			retVal-=board[i][j]*counter_value[counter]*WEIGHT_MARKERS_IN_LINE;
 			if (checkValid(end_coord)){
+				retVal-=board[i][end_coord.y]*counter_value[counter]*weight_to_ring;
 				if (board[i][end_coord.y]==2*board[i][j])
 					retVal-=board[i][end_coord.y]*counter_value[counter]*weight_to_ring;
 			}
@@ -359,6 +361,7 @@ double eval_markers_in_row(const vector<vector<int>> &board, int board_size){
 			}
 			retVal-=board[i][j]*counter_value[counter]*WEIGHT_MARKERS_IN_LINE;
 			if (checkValid(end_coord)){
+				retVal-=board[i][end_coord.y]*counter_value[counter]*weight_to_ring;
 				if (board[end_coord.x][j]==2*board[i][j])
 					retVal-=board[end_coord.x][j]*counter_value[counter]*weight_to_ring;
 			}
@@ -378,6 +381,7 @@ double eval_markers_in_row(const vector<vector<int>> &board, int board_size){
 			}
 			retVal-=board[i][j]*counter_value[counter]*WEIGHT_MARKERS_IN_LINE;
 			if (checkValid(end_coord)){
+				retVal-=board[i][end_coord.y]*counter_value[counter]*weight_to_ring;
 				if (board[end_coord.x][j]==2*board[i][j])
 					retVal-=board[end_coord.x][j]*counter_value[counter]*weight_to_ring;
 			}
@@ -398,6 +402,7 @@ double eval_markers_in_row(const vector<vector<int>> &board, int board_size){
 			}
 			retVal-=board[i][j]*counter_value[counter]*WEIGHT_MARKERS_IN_LINE;
 			if (checkValid(end_coord)){
+				retVal-=board[i][end_coord.y]*counter_value[counter]*weight_to_ring;
 				if (board[end_coord.x][end_coord.y]==2*board[i][j])
 					retVal-=board[end_coord.x][end_coord.y]*counter_value[counter]*weight_to_ring;
 			}
@@ -419,6 +424,7 @@ double eval_markers_in_row(const vector<vector<int>> &board, int board_size){
 			}
 			retVal-=board[i][j]*counter_value[counter]*WEIGHT_MARKERS_IN_LINE;
 			if (checkValid(end_coord)){
+				retVal-=board[i][end_coord.y]*counter_value[counter]*weight_to_ring;
 				if (board[end_coord.x][end_coord.y]==2*board[i][j])
 					retVal-=board[end_coord.x][end_coord.y]*counter_value[counter]*weight_to_ring;
 			}

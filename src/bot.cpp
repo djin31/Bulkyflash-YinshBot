@@ -159,7 +159,7 @@ void Bot::place_ring(){
 void Bot::minimax_decision(int MOVE_NUMBER){
 	nodes_seen = 0;
 	MAX_DEPTH = DEEP_MAX_DEPTH;
-	if (time_left<30|| MOVE_NUMBER<20)
+	if (time_left<40|| MOVE_NUMBER<15)
 		MAX_DEPTH=SHALLOW_MAX_DEPTH;
 
 	if (player_id==1){

@@ -6,10 +6,10 @@
 
 static double hugeNumber = 1000000;
 static double RING_WEIGHTS = 10000;
-static double MARKER_WEIGHTS = 5.0;
-static double BLOCKING_WEIGHT= 5.0;
-static double WEIGHT_MARKERS_IN_LINE= 10.0;
-static double WEIGHT_TO_RING_IN_LINE = 10.0;
+static double MARKER_WEIGHTS = 3.0;
+static double BLOCKING_WEIGHT= 4.0;
+static double WEIGHT_MARKERS_IN_LINE = 5.0;
+static double WEIGHT_TO_RING_IN_LINE = 6.0;
 static double CONTROL_MARKERS = 1.0;
 static double RH_WEIGHT = 1.0;
 
