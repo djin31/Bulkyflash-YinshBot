@@ -174,39 +174,39 @@ void Bot::place_ring(){
 	int pot_positions[7] = {0,7,8,9,11,10,12};
 	bool use_pot_positions=false;
 	if (board_size==6 && Board::markers_in_line==5){
-		use_pot_positions=false;		
+		use_pot_positions=true;		
 	}
 
 	while(rings_placed<Board::given_rings){
 		double time_tick = clock();
 		rings_placed++;
 		
-		// if (use_pot_positions){			
-		// 	for (int i=7;i<12;i++){
-		// 		l.hexagon = 6;
-		// 		l.position = pot_positions[rings_placed];
-		// 		c = location_to_coordinates(l);
-		// 		if (board->board[c.x][c.y]==(-2*player_id) || board->board[c.x][c.y]==(-1*player_id)){
-		// 			use_pot_positions=false;
-		// 		}
-		// 		cerr<<i<<" "<<board->board[c.x][c.y]<<endl;
-		// 	}
-			
-		// 	l.hexagon = 6;
-		// 	l.position = pot_positions[rings_placed];
-		// 	c = location_to_coordinates(l);
-			
-		// 	if (checkValid(c) && board->board[c.x][c.y]==0 && use_pot_positions){
+		if (use_pot_positions){			
+			for (int i=7;i<12;i++){
+				l.hexagon = 6;
+				l.position = i;
+				c = location_to_coordinates(l);
+				if (board->board[c.x][c.y]==(-2*player_id) || board->board[c.x][c.y]==(-1*player_id)){
+					use_pot_positions=false;
+				}
 				
-		// 		move = "P " + to_string(6) + " " + to_string(pot_positions[rings_placed]);
-		// 		board->execute_move(move);
-		// 		cout<<move<<endl;
-		// 	}
-		// 	else{
-		// 		use_pot_positions=false;
-		// 	}
+			}
 			
-		// }
+			l.hexagon = 6;
+			l.position = pot_positions[rings_placed];
+			c = location_to_coordinates(l);
+			
+			if (checkValid(c) && board->board[c.x][c.y]==0 && use_pot_positions){
+				
+				move = "P " + to_string(6) + " " + to_string(pot_positions[rings_placed]);
+				board->execute_move(move);
+				cout<<move<<endl;
+			}
+			else{
+				use_pot_positions=false;
+			}
+		}
+
 		if (!use_pot_positions){
 			if (board->board[board_size][board_size]==0){
 				move="P 0 0";
@@ -224,6 +224,7 @@ void Bot::place_ring(){
 		getline(cin,move);
 		
 		board->execute_move(move);
+		
 	}
 }
 
