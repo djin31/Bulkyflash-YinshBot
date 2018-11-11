@@ -292,7 +292,7 @@ void Bot::minimax_decision(int MOVE_NUMBER){
 void Bot::play(){
 	place_ring();
 	int MAX_MOVES=100;
-	if (board_size>5)
+	if (board_size>=5)
 		DEEP_MAX_DEPTH = 2;
 	while(MAX_MOVES>0){
 		MAX_MOVES--;
