@@ -20,7 +20,7 @@ Bot::Bot(int player_id, double time_limit){
 
 double Bot::minVal(Board *board, double alpha, double beta, int depth_left){
 	if (depth_left==0||board->check_terminal()){
-		return eval_func(*board, player_id);
+		return eval_func(*board, player_id)-player_id*depth_left*100;
 	}
 	double minValue = MAX_VAL;
 	
@@ -42,7 +42,7 @@ double Bot::minVal(Board *board, double alpha, double beta, int depth_left){
 
 double Bot::maxVal(Board *board, double alpha, double beta, int depth_left){
 	if (depth_left==0||board->check_terminal()){
-		return eval_func(*board, player_id);
+		return eval_func(*board, player_id)-player_id*depth_left*100;
 	}
 	double maxValue = MIN_VAL;
 	
