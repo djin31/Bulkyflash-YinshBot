@@ -14,11 +14,27 @@ int main(int argc, char*argv[])
 	given_rings = board_size;
 	Board::set_board_params(board_size,given_rings,3,seq_length);
 	
-	/*vector<double> params;
-	for (int i=0;i<argc;i++){
-		params.push_back(stof(argv[i]));
-	}*/
-	//set_eval_parameters(params);
+	// MARKER_WEIGHTS, BLOCKING_WEIGHT, WEIGHT_MARKERS_IN_LINE, WEIGHT_TO_RING_IN_LINE, CONTROL_MARKERS, RH_WEIGHT
+	double params55[6] = {1.5, 2.0, 2.5, 3.0, 0.5 , 0.5};
+	double params65[6] = {1.5, 2.0, 2.5, 3.0, 0.5 , 0.5};
+	double params66[6] = {1.5, 2.0, 2.5, 3.0, 0.5 , 0.5};
+
+	vector<double> params;
+	
+	// for (int i=0;i<argc;i++){
+	// 	params.push_back(stof(argv[i]));
+	// }
+
+	if (board_size==5){
+		params = vector<double>(begin(params55), end(params55));
+	}
+	else{
+		if (seq_length==5)
+			params = vector<double>(begin(params65), end(params65));
+		else
+			params = vector<double>(begin(params66), end(params66));
+	}
+	set_eval_params(params);
 	
 	if (player_id==2)
 		player_id=1;

@@ -6,12 +6,12 @@
 
 static double hugeNumber = 1000000;
 static double RING_WEIGHTS = 10000;
-static double MARKER_WEIGHTS = 3.0;
-static double BLOCKING_WEIGHT= 4.0;
-static double WEIGHT_MARKERS_IN_LINE = 5.0;
-static double WEIGHT_TO_RING_IN_LINE = 6.0;
-static double CONTROL_MARKERS = 1.0;
-static double RH_WEIGHT = 1.0;
+static double MARKER_WEIGHTS = 1.5;
+static double BLOCKING_WEIGHT= 2.0;
+static double WEIGHT_MARKERS_IN_LINE = 2.5;
+static double WEIGHT_TO_RING_IN_LINE = 3.0;
+static double CONTROL_MARKERS = 0.5;
+static double RH_WEIGHT = 0.5;
 
 void set_eval_params(vector<double> params); 
 double eval_func(const Board &board, int player_id); //give the goodness of the current state of the board

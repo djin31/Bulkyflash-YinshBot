@@ -1,13 +1,14 @@
 #include "eval_functions.h"
 
 void set_eval_params(vector<double> params){
-	if (params.size()==5)
+	if (params.size()==6)
 	{	
 		MARKER_WEIGHTS = params[0];
 		BLOCKING_WEIGHT = params[1];
 		WEIGHT_MARKERS_IN_LINE = params[2];
 		WEIGHT_TO_RING_IN_LINE = params[3];
 		CONTROL_MARKERS = params[4];
+		RH_WEIGHT = params[5];
 	}
 	else
 	{
