@@ -16,7 +16,7 @@ int main(int argc, char*argv[])
 	
 	// MARKER_WEIGHTS, BLOCKING_WEIGHT, WEIGHT_MARKERS_IN_LINE, WEIGHT_TO_RING_IN_LINE, CONTROL_MARKERS, RH_WEIGHT
 	double params55[6] = {1.5, 2.5, 2.0, 3.0, 0.5 , 0.5};
-	double params65[6] = {1.5, 2.0, 2.5, 3.0, 0.5 , 0.5};
+	double params65[6] = {1.0, 2.5, 2.0, 3.0, 1.0 , 0.5};
 	double params66[6] = {1.5, 2.0, 2.5, 3.0, 0.5 , 0.5};
 
 	vector<double> params;
